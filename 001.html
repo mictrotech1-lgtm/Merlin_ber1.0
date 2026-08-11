@@ -1,8 +1,8 @@
 <!-- ======================================================
-🧙‍♂️ MERLÍN · CORAZÓN / NÚCLEO
+🧙‍♂️ MERLÍN · VERSIÓN AUTOMÁTICA DEFINITIVA
 © MICTROTECH · Rodrigo Emiliano Urbino
-🛡️ v2.6.1 - ALMA DENTRO
-🏫 E.P. N°10 "PROVINCIA DE CÓRDOBA"
+🛡️ v2.8.0 · LA ESCAPADITA SE ACTIVA SOLA
+🏫 DESTINO: E.P. N°10 "PROVINCIA DE CÓRDOBA"
 ====================================================== -->
 <!DOCTYPE html>
 <html lang="es">
@@ -11,64 +11,328 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MERLÍN · E.P. N°10</title>
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui, sans-serif; }
-    body { background:#050508; min-height:100vh; padding:1.5rem; color:#e0e0e0; }
-    h1 { color:#D4AF37; text-align:center; font-size:2rem; margin-top:1rem; }
-    .selector { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin:1rem 0; }
-    select { background:#111827; border:1px solid #D4AF37; border-radius:12px; padding:0.8rem; color:#fff; }
-    .temas { display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:center; margin-bottom:1rem; }
-    .btn-tema { background:#111827; border:1px solid #D4AF37; border-radius:10px; padding:0.6rem; color:#fff; cursor:pointer; }
-    .btn-tema.activa { background:#D4AF37; color:#000; font-weight:bold; }
-    #cajaTexto { background:#111827; border:1px solid #D4AF37; border-radius:16px; padding:1.2rem; min-height:120px; margin-bottom:1rem; white-space:pre-wrap; }
-    .botones { display:grid; grid-template-columns:repeat(3,1fr); gap:0.7rem; margin-bottom:1rem; }
-    button { border-radius:12px; padding:1rem; border:none; font-weight:bold; cursor:pointer; }
-    .btn-funcion { background:#111827; color:#fff; border:1px solid #D4AF37; }
-    .btn-explicar { background:#D4AF37; color:#000; }
+    * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui, -apple-system, sans-serif; }
+    body { background: linear-gradient(180deg, #050508 0%, #111827 100%); min-height:100vh; padding:1.5rem; color: #e0e0e0; }
+    
+    .titulo { font-size: 2rem; font-weight: 800; color: #D4AF37; text-align:center; text-shadow: 0 0 8px rgba(212,175,55,0.4); margin-top: 2rem; }
+    .subtitulo { font-size: 0.9rem; color: #a0aec0; text-align:center; margin-bottom: 1rem; }
+    .xp { text-align:center; color: #D4AF37; margin-bottom: 1rem; font-size: 0.9rem; font-weight:600; }
+    .selector { display:grid; grid-template-columns: 1fr 1fr; gap:0.8rem; margin-bottom:1rem; }
+    .selector select { background: rgba(40,50,80,0.8); border: 1px solid #D4AF37; border-radius: 12px; padding: 0.8rem; color: #e0e0e0; font-size:1rem; width:100%; }
+    .temas { display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1rem; justify-content:center; min-height:40px; }
+    .btn-tema { background: rgba(40,50,80,0.8); border: 1px solid #D4AF37; border-radius: 10px; padding: 0.6rem 0.8rem; color: #e0e0e0; cursor:pointer; font-size:0.85rem; transition: all 0.2s; }
+    .btn-tema:active { transform: scale(0.95); }
+    .btn-tema.activa { background: #D4AF37; color:#050508; font-weight:700; }
+    .caja-texto { background: rgba(20,25,40,0.9); border: 1px solid #D4AF37; border-radius: 20px; padding: 1.5rem; margin-bottom: 1rem; font-size: 1.1rem; min-height: 120px; white-space: pre-wrap; }
+    .caja-texto:focus { outline: 2px solid #D4AF37; }
+    .botones-fila { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7rem; margin-bottom: 1rem; }
+    .btn-funcion { background: rgba(40,50,80,0.8); color: #e0e0e0; border: 1px solid #D4AF37; border-radius: 14px; padding: 1rem 0.3rem; font-size: 0.8rem; cursor: pointer; transition: all 0.15s; user-select:none; text-align:center; }
+    .btn-funcion span { font-size:1.3rem; display:block; margin-bottom:2px; }
+    .btn-funcion:active { transform: scale(0.94); background: rgba(212,175,55,0.3); }
+    .btn-funcion.grabando { background: rgba(220,38,38,0.7)!important; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+    .botones-accion { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; }
+    .btn-accion { border-radius: 14px; padding: 1.1rem 0.5rem; font-size: 1rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s; }
+    .btn-accion:active { transform: scale(0.96); }
+    .btn-explicar { background: #D4AF37; color: #050508; }
+    .btn-repasar { background: #1a365d; color: white; }
+    .btn-examen { background: #c53030; color: white; }
+    .seccion-apoyo { background: rgba(15,20,30,0.9); border: 1px solid #D4AF37; border-radius: 16px; padding: 1.5rem; margin: 2rem 0; text-align:center; }
+    .seccion-apoyo h3 { color: #D4AF37; font-size: 1.4rem; margin-bottom: 1rem; }
+    .dato-apoyo { margin: 0.7rem 0; color: #e0e0e0; font-size: 0.95rem; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+    .valor-apoyo { color: #D4AF37; font-weight: 600; font-family: monospace; word-break:break-all; }
+    .btn-copiar { background:#D4AF37; color:#050508; border:none; border-radius:8px; padding:6px 10px; font-size:0.8rem; cursor:pointer; font-weight:700; }
+    .btn-copiar:active { transform:scale(0.95); }
+    .pie { text-align: center; padding: 2rem 1rem; color: #777; font-size: 0.85rem; border-top: 1px solid #222; margin-top: 2rem; }
+    @media(max-width:500px){.dato-apoyo{justify-content:center; text-align:center} .botones-fila{grid-template-columns:repeat(3,1fr)} }
   </style>
 </head>
 <body>
 
-<h1>🧙‍♂️ MERLÍN</h1>
+  <h1 class="titulo">🧙‍♂️ MERLÍN</h1>
+  <p class="subtitulo">v2.8.0 · LA ESCAPADITA AUTOMÁTICA · E.P. N°10</p>
+  <p class="xp" id="xp">Nivel 1 · 0 XP</p>
 
-<div class="selector">
-  <select id="grado">
-    <option value="1">1° al 6° Grado</option>
-  </select>
-  <select id="materia">
-    <option>Matemática - Lengua - Naturales - Sociales</option>
-  </select>
-</div>
+  <div class="selector">
+    <select id="grado" onchange="Merlyn.cargarTemas()">
+      <option value="1">1° Grado</option><option value="2">2° Grado</option><option value="3">3° Grado</option>
+      <option value="4">4° Grado</option><option value="5">5° Grado</option><option value="6">6° Grado</option>
+    </select>
+    <select id="materia" onchange="Merlyn.cargarTemas()">
+      <option value="Matematica">Matemática</option><option value="Lengua">Lengua</option><option value="CienciasNaturales">Ciencias Naturales</option><option value="CienciasSociales">Ciencias Sociales</option>
+    </select>
+  </div>
 
-<div class="temas" id="temas"></div>
-<div id="cajaTexto" contenteditable="true"></div>
+  <div class="temas" id="temas"></div>
+  <div class="caja-texto" id="cajaTexto" contenteditable="true"></div>
 
-<div class="botones">
-  <button class="btn-funcion" id="btnMicro">🎤 Hablar</button>
-  <button class="btn-funcion">🔊 Escuchar</button>
-  <button class="btn-funcion">📷 Foto</button>
-</div>
+  <div class="botones-fila">
+    <button class="btn-funcion" id="btnMicro"><span>🎤</span>Preguntar</button>
+    <button class="btn-funcion" onclick="VozMerlin.alternar()"><span>🔊</span>Escuchar</button>
+    <button class="btn-funcion" onclick="CamaraMerlin.abrir()"><span>📷</span>Foto <span id="cuenta-foto">10</span></button>
+  </div>
 
-<div class="botones">
-  <button class="btn-explicar" onclick="Merlyn.explicar()">📖 Explicar</button>
-  <button class="btn-funcion">📝 Repasar</button>
-  <button class="btn-funcion">🎯 Evaluar</button>
-</div>
+  <div class="botones-accion">
+    <button class="btn-accion btn-explicar" onclick="Merlyn.explicar()">📖 Explicar</button>
+    <button class="btn-accion btn-repasar" onclick="Merlyn.repasar()">📝 Repasar</button>
+    <button class="btn-accion btn-examen" onclick="Merlyn.examen()">🎯 Evaluar</button>
+  </div>
+
+  <section class="seccion-apoyo">
+    <h3>🤝 APOYÁ ESTE PROYECTO</h3>
+    <p style="color:#ccc; margin-bottom:1rem;">Merlín es y será gratuito para siempre.</p>
+    <p class="dato-apoyo"><strong>Titular:</strong> <span class="valor-apoyo">Rodrigo Emiliano Urbino</span></p>
+    <p class="dato-apoyo"><strong>Alias:</strong> <span class="valor-apoyo" id="alias">AVES.BRUMA.OFICIO</span> <button class="btn-copiar" onclick="copiar('alias')">Copiar</button></p>
+    <p class="dato-apoyo"><strong>CBU:</strong> <span class="valor-apoyo" id="cbu">384020050000005179327</span> <button class="btn-copiar" onclick="copiar('cbu')">Copiar</button></p>
+    <p class="dato-apoyo"><strong>Banco:</strong> <span class="valor-apoyo">Ualá Bank S.A.U.</span></p>
+  </section>
+
+  <footer class="pie">
+    © 2026 MICTROTECH · Rodrigo Emiliano Urbino
+  </footer>
 
 <script>
-// AQUÍ VIVE EL ALMA: SABIDURÍA, MEMORIA Y VOZ
-const NUCLEO = { ARCHIVO:"mictrotech.sab" };
-const Sabiduria = {
-  respuestasListas: {
-    "suma": "Juntar y contar cuánto hay en total.",
-    "nota": "🎵 En música: Do Re Mi... 📝 En la escuela: del 1 al 10.",
-    "río": "Agua que corre desde lo alto hasta el mar."
+// ======================================================
+// 🧙‍♂️ NÚCLEO + LA ESCAPADITA AUTOMÁTICA
+// ======================================================
+const NUCLEO = {
+  ARCHIVO: "mictrotech.sab",
+  guardar: function(clave, valor){
+    const datos = JSON.parse(localStorage.getItem(this.ARCHIVO) || "{}");
+    datos[clave] = valor;
+    localStorage.setItem(this.ARCHIVO, JSON.stringify(datos));
   },
-  traer: async function(tema){
-    // BUSCA, EXPLICA Y GUARDA
+  cargar: function(clave){
+    const datos = JSON.parse(localStorage.getItem(this.ARCHIVO) || "{}");
+    return datos[clave] || null;
   }
 };
-const Merlyn = { explicar: async ()=>{ await Sabiduria.traer(document.getElementById("cajaTexto").innerText); } };
-</script>
 
+// ✅ LA ESCAPADITA: LUGAR SEGURO, SE USA SOLA
+const BLOQUE_TEMPORAL = {
+  limpiar: () => localStorage.removeItem("merlin_escapadita"),
+  guardar: (texto) => localStorage.setItem("merlin_escapadita", texto),
+  leer: () => localStorage.getItem("merlin_escapadita") || null
+};
+
+function copiar(id){
+  const texto = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(texto).then(()=>{
+    VozMerlin.hablar("Copiado");
+    alert("Copiado: " + texto);
+  });
+}
+
+const CurriculaPBA = {
+  "1": { "Matematica": ["Números hasta 100", "Sumas y restas", "Figuras geométricas", "Pensamiento computacional"],
+         "Lengua": ["Leer cuentos", "Escribir mi nombre", "Comprensión lectora", "Oralidad"],
+         "CienciasNaturales": ["Mi cuerpo", "Los 5 sentidos", "Animales y plantas", "Cuidado del ambiente"],
+         "CienciasSociales": ["La escuela", "Mi familia", "El barrio", "Ciudadanía digital"]},
+  "2": { "Matematica": ["Números hasta 1000", "Multiplicación", "Fracciones", "Resolución de problemas"],
+         "Lengua": ["Leer fábulas", "Mayúscula y punto", "Sustantivos", "Producción de textos"],
+         "CienciasNaturales": ["Seres vivos", "Alimentos saludables", "El sol y la luna", "Ciencia y tecnología"],
+         "CienciasSociales": ["El mapa", "Trabajos en el barrio", "Símbolos patrios", "Derechos del niño"]},
+  "3": { "Matematica": ["División", "Perímetro", "Gráficos", "Educación financiera"],
+         "Lengua": ["Noticias", "Adjetivos", "Verbos", "Resumen"],
+         "CienciasNaturales": ["Ecosistemas", "Cuerpo humano", "Materiales", "Fuerza"],
+         "CienciasSociales": ["Buenos Aires", "Campo y ciudad", "Primeros habitantes", "El gobierno"]},
+  "4": { "Matematica": ["Fracciones equivalentes", "Área", "Probabilidad", "Decimales"],
+         "Lengua": ["Cuento", "Biografía", "Sinónimos", "Entrevista"],
+         "CienciasNaturales": ["La materia", "Energía", "Sistema solar", "Salud"],
+         "CienciasSociales": ["Las provincias", "Recursos naturales", "La Constitución", "Migraciones"]},
+  "5": { "Matematica": ["Porcentajes", "Volumen", "Estadística", "Operaciones combinadas"],
+         "Lengua": ["Novela", "Artículo de opinión", "Conectores", "Carta formal"],
+         "CienciasNaturales": ["Células", "Energía eléctrica", "Continentes", "Prevención"],
+         "CienciasSociales": ["Argentina y el mundo", "Democracia", "Población", "Problemas sociales"]},
+  "6": { "Matematica": ["Proporcionalidad", "Ecuaciones", "Ángulos", "Pensamiento computacional"],
+         "Lengua": ["Crónica", "Debate", "Textos expositivos", "Proyecto"],
+         "CienciasNaturales": ["ADN", "Reproducción", "Tecnología", "Calentamiento global"],
+         "CienciasSociales": ["Historia Argentina", "Independencia", "Economía", "Participación ciudadana"]}
+};
+
+const VozMerlin = {
+  activa:true, recognition: null, estaEscuchando: false,
+  hablar:(t)=>{ if(window.speechSynthesis){speechSynthesis.cancel(); const v=new SpeechSynthesisUtterance(t); v.lang="es-AR"; v.rate=0.75; v.pitch=0.85; speechSynthesis.speak(v);} },
+  alternar:()=>{ VozMerlin.activa=!VozMerlin.activa; if(!VozMerlin.activa) speechSynthesis.cancel(); },
+  iniciarEscucha: function(){
+    if(this.estaEscuchando) return;
+    const Reconocer = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!Reconocer) return alert("Usá Chrome o Edge para el micrófono");
+    this.estaEscuchando = true;
+    document.getElementById("btnMicro").classList.add("grabando");
+    document.getElementById("cajaTexto").innerText = "";
+    this.recognition = new Reconocer();
+    this.recognition.lang = "es-AR";
+    this.recognition.continuous = false;
+    this.recognition.interimResults = false;
+    this.recognition.onresult = (e) => { document.getElementById("cajaTexto").innerText = e.results[0][0].transcript; };
+    this.recognition.onend = () => { this.estaEscuchando = false; document.getElementById("btnMicro").classList.remove("grabando"); };
+    this.recognition.onerror = () => { this.estaEscuchando = false; document.getElementById("btnMicro").classList.remove("grabando"); };
+    this.recognition.start();
+  },
+  detenerEscucha: function(){ if(this.recognition && this.estaEscuchando) { this.recognition.stop(); this.estaEscuchando = false; } }
+};
+
+const Sabiduria = {
+  ultimoTema: null, ultimaMateria: null, ultimoGrado: null,
+
+  limpiarTexto: function(texto){ return texto.replace("🎤 Te escucho...", "").replace("🔍 Buscando", "").trim(); },
+
+  chequearCambios: function(grado, materia, temaNuevo){
+    let aviso = "";
+    if(this.ultimaMateria && this.ultimaMateria !== materia) aviso += `\n\n💡 Cambiamos de rama: dejamos ${this.ultimaMateria} y vamos a ${materia}. Te lo explico igual.`;
+    if(this.ultimoGrado && this.ultimoGrado !== grado) aviso += `\n\n💡 También cambiamos de grado, perfecto.`;
+    if(this.ultimoTema && this.ultimoTema !== temaNuevo){
+      const orden = CurriculaPBA[grado]?.[materia];
+      const posAnt = orden ? orden.indexOf(this.ultimoTema) : -1;
+      const posNue = orden ? orden.indexOf(temaNuevo) : -1;
+      if(posAnt >=0 && posNue >=0 && posNue > posAnt +1) aviso += `\n\n💡 Te aviso: esto suele ir después de lo que veíamos, pero acá lo tenés.`;
+    }
+    return aviso;
+  },
+
+  respuestasListas: {
+    "suma": `🧮 Mirá pibe, las sumas son así:
+Sumar es juntar cosas y decir cuántas hay en total.
+
+Ejemplo:
+Tenés 2 caramelos y te dan 3 → 2 + 3 = 5.
+
+Ejemplos fáciles:
+1 + 1 = 2
+3 + 2 = 5
+5 + 5 = 10
+
+Si te trabas usá los deditos. ¿Querés practicar?`,
+    "oracion": `📝 Mirá pibe, una oración es así:
+Es un grupo de palabras que dicen algo con sentido.
+
+Tiene tres reglas:
+✅ Empieza con mayúscula
+✅ Se entiende bien
+✅ Termina con un punto .
+
+Ejemplos:
+• El gato duerme.
+• Yo leo un libro.
+• Hoy vamos a la escuela.
+
+¿Te quedó claro?`,
+    "río": `🌊 Mirá pibe, qué es un río:
+Es agua que corre por la tierra, desde lo alto hasta el mar.
+
+Partes sencillas:
+✅ Nacimiento: donde empieza
+✅ Curso: el camino que recorre
+✅ Desembocadura: donde llega al mar
+
+Llevan agua y dan vida a todo. ¿Te quedó claro?`,
+    "nota": `🎵 Mirá pibe, una nota es así:
+En música: Son los sonidos. Do, Re, Mi, Fa, Sol, La, Si.
+En la escuela: Es el número que te ponen. Del 1 al 10.
+
+¿De cuál de las dos querías saber?`
+  },
+
+  ayudarAPreguntar: function(){
+    return `🤔 Mirá, no entendí bien.
+Probá decirme así:
+• "¿Qué es un río?"
+• "¿Cómo se hace una suma?"
+• "¿Me explicás qué es..."
+
+Decímelo despacio.`;
+  },
+
+  buscarEnInternet: async function(tema){
+    try{
+      const urlWiki = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://es.wikipedia.org/api/rest_v1/page/summary/${tema}`)}`;
+      const res = await fetch(urlWiki, {signal: AbortSignal.timeout(4000)});
+      if(res.ok){
+        const datos = await res.json();
+        if(datos.extract) return `\n📚 Más información:\n${datos.extract}`;
+      }
+    }catch(e){}
+    return null;
+  },
+
+  // ✅ FLUJO AUTOMÁTICO: MERLÍN MANEJA LA ESCAPADITA SOLO
+  traer: async function(tema){
+    tema = this.limpiarTexto(tema).toLowerCase();
+    const grado = document.getElementById("grado").value;
+    const materia = document.getElementById("materia").value;
+    const aviso = this.chequearCambios(grado, materia, tema);
+
+    let contenido = "";
+    for(let clave in this.respuestasListas){
+      if(tema.includes(clave)){
+        contenido = this.respuestasListas[clave];
+        break;
+      }
+    }
+
+    // SI NO LO TIENE: LA ESCAPADITA SE ABRE SOLA
+    if(!contenido){
+      document.getElementById("cajaTexto").innerText = "🔍 Salgo a buscar...";
+      BLOQUE_TEMPORAL.guardar("TRAYENDO...");
+      let extra = await this.buscarEnInternet(tema);
+      contenido = extra || `Mirá sobre esto: lo vemos despacio.`;
+    }
+
+    // GUARDA, VUELVE Y RAZONA
+    BLOQUE_TEMPORAL.guardar(contenido);
+    document.getElementById("cajaTexto").innerText = "🧠 Lo ordeno...";
+    const infoSegura = BLOQUE_TEMPORAL.leer();
+    const respuestaFinal = infoSegura + aviso;
+
+    document.getElementById("cajaTexto").innerText = respuestaFinal;
+    VozMerlin.hablar(respuestaFinal.substring(0,250) + " ¿Te quedó claro?");
+    
+    this.ultimoTema = tema; this.ultimaMateria = materia; this.ultimoGrado = grado;
+    Merlyn.ganarXP(10);
+  }
+};
+
+const CamaraMerlin = {
+  limite:10,
+  disponibles:()=>{const h=new Date().toLocaleDateString(); const d=JSON.parse(localStorage.getItem("camara")||`{"fecha":"${h}","usados":0}`); if(d.fecha!==h) d.fecha=h,d.usados=0; NUCLEO.guardar("camara",d); return 10-d.usados;},
+  abrir:()=>{ if(CamaraMerlin.disponibles()<=0) return VozMerlin.hablar("Hoy usaste las 10 fotos. Mañana volvemos."); const i=document.createElement("input"); i.type="file"; i.accept="image/*"; i.capture="environment"; i.onchange=()=>{const d=NUCLEO.cargar("camara")||{usados:0}; d.usados++; NUCLEO.guardar("camara",d); document.getElementById("cuenta-foto").innerText=CamaraMerlin.disponibles(); VozMerlin.hablar("Imagen recibida."); Merlyn.ganarXP(15);}; i.click();}
+};
+
+const Merlyn = {
+  alumno: NUCLEO.cargar("alumno") || {xp:0, nivel:1},
+  cargarTemas: function(){
+    const g=document.getElementById("grado").value; const m=document.getElementById("materia").value;
+    const temas = CurriculaPBA[g][m];
+    document.getElementById("temas").innerHTML = temas.map(t=>`<button class="btn-tema" onclick="Merlyn.seleccionarTema('${t}', this)">${t}</button>`).join("");
+  },
+  seleccionarTema: function(tema, btn){ document.getElementById("cajaTexto").innerText = tema; document.querySelectorAll(".btn-tema").forEach(b=>b.classList.remove("activa")); btn.classList.add("activa"); },
+  ganarXP: function(c){ 
+    this.alumno.xp+=c; this.alumno.nivel=Math.floor(this.alumno.xp/100)+1; 
+    document.getElementById("xp").innerText=`Nivel ${this.alumno.nivel} · ${this.alumno.xp} XP`; 
+    NUCLEO.guardar("alumno", this.alumno); 
+  },
+  explicar: async function(){ let tema = Sabiduria.limpiarTexto(document.getElementById("cajaTexto").innerText); if(!tema) return VozMerlin.hablar("Decime qué querés saber."); await Sabiduria.traer(tema); this.ganarXP(10); },
+  repasar: async function(){ this.explicar(); this.ganarXP(5); },
+  examen: function(){ let tema = Sabiduria.limpiarTexto(document.getElementById("cajaTexto").innerText); document.getElementById("cajaTexto").innerText=`🎯 A ver... ¿Qué es lo que más te quedó? Contame con tus palabras.`; VozMerlin.hablar("A ver, contame con tus palabras qué aprendiste."); }
+};
+
+let presionando = false;
+const b=document.getElementById("btnMicro");
+b.addEventListener("mousedown", ()=>{presionando=true; VozMerlin.iniciarEscucha();});
+b.addEventListener("mouseup", ()=>{presionando=false; VozMerlin.detenerEscucha();});
+b.addEventListener("touchstart", e=>{e.preventDefault(); presionando=true; VozMerlin.iniciarEscucha();});
+b.addEventListener("touchend", ()=>{presionando=false; VozMerlin.detenerEscucha();});
+b.addEventListener("mouseleave", ()=>{if(presionando){presionando=false; VozMerlin.detenerEscucha();}});
+
+window.onload=()=>{
+  Merlyn.cargarTemas();
+  document.getElementById("xp").innerText=`Nivel ${Merlyn.alumno.nivel} · ${Merlyn.alumno.xp} XP`;
+  document.getElementById("cuenta-foto").innerText=CamaraMerlin.disponibles();
+  VozMerlin.hablar("Hola. Soy Merlín. Ya sé cuándo usar mi lugar seguro y cuándo salir a buscar. Todo funciona solo.");
+  console.log("✅ MERLÍN v2.8.0 · LA ESCAPADITA ES AUTOMÁTICA");
+};
+</script>
 </body>
-</html>
+  </html>
+  
