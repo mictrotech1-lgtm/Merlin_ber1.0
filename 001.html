@@ -1,7 +1,7 @@
 <!-- ======================================================
 🧙‍♂️ MERLÍN · VERSIÓN OFICIAL DEFINITIVA E.P. N°10
 © MICTROTECH · Rodrigo Emiliano Urbino
-🛡️ v2.5.0 · BUSCA · AYUDA · SIGO TU RITMO
+🛡️ v2.6.0 · TODO INCLUIDO · SIGO TU RITMO
 🏫 DESTINO: E.P. N°10 "PROVINCIA DE CÓRDOBA"
 ====================================================== -->
 <!DOCTYPE html>
@@ -50,7 +50,7 @@
 <body>
 
   <h1 class="titulo">🧙‍♂️ MERLÍN</h1>
-  <p class="subtitulo">v2.5.0 · BUSCO Y TE AYUDO · E.P. N°10</p>
+  <p class="subtitulo">v2.6.0 · TODO LISTO · E.P. N°10</p>
   <p class="xp" id="xp">Nivel 2 · 120 XP</p>
 
   <div class="selector">
@@ -250,6 +250,13 @@ Decímelo despacio.`;
     const materia = document.getElementById("materia").value;
     const aviso = this.chequearCambios(grado, materia, tema);
 
+    // RESPUESTA DE NOTA AGREGADA
+    this.respuestasListas["nota"] = `🎵 Mirá pibe, una nota es así:
+En música: Son los sonidos. Do, Re, Mi, Fa, Sol, La, Si.
+En la escuela: Es el número que te ponen. Del 1 al 10.
+
+¿De cuál de las dos querías saber?`;
+
     for(let clave in this.respuestasListas){
       if(tema.includes(clave)){
         let respuesta = this.respuestasListas[clave] + aviso;
@@ -261,19 +268,21 @@ Decímelo despacio.`;
       }
     }
 
-    if(tema.length < 4 || !tema.includes("qué") && !tema.includes("cómo") && !tema.includes("es")){
+    // ARREGLO PARA PREGUNTAS MUY CORTAS
+    if(tema.length < 3){
       document.getElementById("cajaTexto").innerText = this.ayudarAPreguntar();
       VozMerlin.hablar(this.ayudarAPreguntar());
       return;
     }
 
     document.getElementById("cajaTexto").innerText = "🔍 Lo busco y te lo explico...";
-    let base = `Mirá, esto es lo que tenés que saber sobre esto:\nLo vemos sin apuro.` + aviso;
+    let base = `Mirá, sobre esto que preguntás:\nLo vemos sin apuro.` + aviso;
     let extra = await this.buscarEnInternet(tema);
     if(extra) base += extra;
+    else base += "\n\nNo encontré más información. Probá decirme con otras palabras.";
 
     document.getElementById("cajaTexto").innerText = base;
-    VozMerlin.hablar("Mirá, lo vemos despacio.");
+    VozMerlin.hablar(base.substring(0,200));
     this.ultimoTema = tema; this.ultimaMateria = materia; this.ultimoGrado = grado;
     Merlyn.ganarXP(10);
   }
@@ -300,7 +309,7 @@ const Merlyn = {
   },
   explicar: async function(){ let tema = Sabiduria.limpiarTexto(document.getElementById("cajaTexto").innerText); if(!tema) return VozMerlin.hablar("Decime qué querés saber."); await Sabiduria.traer(tema); this.ganarXP(10); },
   repasar: async function(){ this.explicar(); this.ganarXP(5); },
-  examen: function(){ let tema = Sabiduria.limpiarTexto(document.getElementById("cajaTexto").innerText); document.getElementById("cajaTexto").innerText=`🎯 A ver... ¿Qué es lo que más te quedó de esto? Contame con tus palabras.`; VozMerlin.hablar("A ver, contame con tus palabras."); }
+  examen: function(){ let tema = Sabiduria.limpiarTexto(document.getElementById("cajaTexto").innerText); document.getElementById("cajaTexto").innerText=`🎯 A ver... ¿Qué es lo que más te quedó de esto? Contame con tus palabras.`; VozMerlin.hablar("A ver, contame con tus palabras qué aprendiste."); }
 };
 
 let presionando = false;
@@ -316,9 +325,9 @@ window.onload=()=>{
   document.getElementById("xp").innerText=`Nivel ${Merlyn.alumno.nivel} · ${Merlyn.alumno.xp} XP`;
   document.getElementById("cuenta-foto").innerText=CamaraMerlin.disponibles();
   VozMerlin.hablar("Hola. Soy Merlín. Te explico, te ayudo a preguntar y busco lo que haga falta.");
-  console.log("✅ MERLÍN v2.5.0 · COMPLETO Y LISTO");
+  console.log("✅ MERLÍN v2.6.0 · FINAL Y COMPLETO");
 };
 </script>
 </body>
-  </html>
-  
+</html>
+
