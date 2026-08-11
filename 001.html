@@ -1,7 +1,7 @@
 <!-- ======================================================
 🧙‍♂️ MERLÍN · VERSIÓN OFICIAL DEFINITIVA E.P. N°10
 © MICTROTECH · Rodrigo Emiliano Urbino
-🛡️ v2.2.6 · NÚCLEO: MICROTECH.SAB · CONECTADO
+🛡️ v2.4.0 · NÚCLEO CON ALMA · SIGUE EL RITMO DEL CHICO
 🏫 DESTINO: E.P. N°10 "PROVINCIA DE CÓRDOBA" · AMBA
 ====================================================== -->
 <!DOCTYPE html>
@@ -14,33 +14,6 @@
     * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui, -apple-system, sans-serif; }
     body { background: linear-gradient(180deg, #050508 0%, #111827 100%); min-height:100vh; padding:1.5rem; color: #e0e0e0; }
     
-    /* INDICADOR DE CONEXIÓN */
-    .estado-conexion {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      background: rgba(15,20,30,0.9);
-      border: 1px solid #444;
-      border-radius: 20px;
-      padding: 6px 12px;
-      font-size: 0.8rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      z-index: 999;
-    }
-    .luz {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #ff4444;
-      box-shadow: 0 0 5px #ff4444;
-    }
-    .luz.conectado {
-      background: #44ff44;
-      box-shadow: 0 0 8px #44ff44;
-    }
-    
     .titulo { font-size: 2rem; font-weight: 800; color: #D4AF37; text-align:center; text-shadow: 0 0 8px rgba(212,175,55,0.4); margin-top: 2rem; }
     .alerta { background: rgba(212,175,55,0.2); border: 1px solid #D4AF37; border-radius: 12px; padding: 0.8rem; margin: 1rem 0; text-align:center; font-size:0.9rem; display:none; animation: fadeIn 0.5s; }
     @keyframes fadeIn { from{opacity:0} to{opacity:1} }
@@ -48,7 +21,7 @@
     .xp { text-align:center; color: #D4AF37; margin-bottom: 1rem; font-size: 0.9rem; font-weight:600; }
     .selector { display:grid; grid-template-columns: 1fr 1fr; gap:0.8rem; margin-bottom:1rem; }
     .selector select { background: rgba(40,50,80,0.8); border: 1px solid #D4AF37; border-radius: 12px; padding: 0.8rem; color: #e0e0e0; font-size:1rem; width:100%; }
-    .temas { display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1rem; justify-content:center; }
+    .temas { display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1rem; justify-content:center; min-height:40px; }
     .btn-tema { background: rgba(40,50,80,0.8); border: 1px solid #D4AF37; border-radius: 10px; padding: 0.6rem 0.8rem; color: #e0e0e0; cursor:pointer; font-size:0.85rem; transition: all 0.2s; }
     .btn-tema:active { transform: scale(0.95); }
     .btn-tema.activa { background: #D4AF37; color:#050508; font-weight:700; }
@@ -78,14 +51,8 @@
 </head>
 <body>
 
-  <!-- INDICADOR DE CONEXIÓN -->
-  <div class="estado-conexion">
-    <div class="luz" id="luzConexion"></div>
-    <span id="textoConexion">Verificando...</span>
-  </div>
-
   <h1 class="titulo">🧙‍♂️ MERLÍN</h1>
-  <p class="subtitulo">Alineado al Diseño Curricular PBA · v2.2.6 · NÚCLEO ACTIVO</p>
+  <p class="subtitulo">v2.4.0 · SIGO TU RITMO · E.P. N°10</p>
   <p class="xp" id="xp">Nivel 1 · 0 XP</p>
 
   <div class="selector">
@@ -99,7 +66,7 @@
   </div>
 
   <div class="temas" id="temas"></div>
-  <div class="caja-texto" id="cajaTexto" contenteditable="true">Elegí grado, materia y un tema...</div>
+  <div class="caja-texto" id="cajaTexto" contenteditable="true"></div>
 
   <div class="botones-fila">
     <button class="btn-funcion" id="btnMicro"><span style="font-size:1.5rem;display:block">🎤</span> Preguntar</button>
@@ -115,7 +82,7 @@
 
   <section class="seccion-apoyo">
     <h3>🤝 APOYÁ ESTE PROYECTO</h3>
-    <p style="color:#ccc; margin-bottom:1rem;">Merlín es y será gratuito para siempre. Las contribuciones se destinan exclusivamente a mantener el alojamiento y el funcionamiento.</p>
+    <p style="color:#ccc; margin-bottom:1rem;">Merlín es y será gratuito para siempre.</p>
     <p class="dato-apoyo"><strong>Titular:</strong> <span class="valor-apoyo">Rodrigo Emiliano Urbino</span></p>
     <p class="dato-apoyo"><strong>Alias:</strong> <span class="valor-apoyo" id="alias">AVES.BRUMA.OFICIO</span> <button class="btn-copiar" onclick="copiar('alias')">Copiar</button></p>
     <p class="dato-apoyo"><strong>CBU:</strong> <span class="valor-apoyo" id="cbu">384020050000005179327</span> <button class="btn-copiar" onclick="copiar('cbu')">Copiar</button></p>
@@ -128,7 +95,7 @@
 
 <script>
 // ======================================================
-// 🧙‍♂️ NÚCLEO DE ALMACENAMIENTO: MICROTECH.SAB
+// 🧙‍♂️ NÚCLEO CON ALMA: MICROTECH.SAB
 // ======================================================
 const NUCLEO = {
   ARCHIVO: "mictrotech.sab",
@@ -136,7 +103,7 @@ const NUCLEO = {
     const datos = JSON.parse(localStorage.getItem(this.ARCHIVO) || "{}");
     datos[clave] = valor;
     localStorage.setItem(this.ARCHIVO, JSON.stringify(datos));
-    console.log(`✅ GUARDADO EN ${this.ARCHIVO}: ${clave}`);
+    console.log(`✅ GUARDADO EN EL ALMA: ${clave}`);
   },
   cargar: function(clave){
     const datos = JSON.parse(localStorage.getItem(this.ARCHIVO) || "{}");
@@ -152,24 +119,6 @@ function copiar(id){
     alert("Copiado: " + texto);
   });
 }
-
-// ESTADO DE CONEXIÓN
-const CONEXION = {
-  verificar: function(){
-    const luz = document.getElementById("luzConexion");
-    const texto = document.getElementById("textoConexion");
-    if(navigator.onLine){
-      luz.classList.add("conectado");
-      texto.innerText = "CONECTADO";
-      console.log("✅ MERLÍN CONECTADO AL NÚCLEO");
-      VozMerlin.hablar("Conexión establecida. Unido al núcleo.");
-    } else {
-      luz.classList.remove("conectado");
-      texto.innerText = "SIN CONEXIÓN";
-      VozMerlin.hablar("Sin conexión. Funcionando en modo local.");
-    }
-  }
-};
 
 // CURRICULA OFICIAL PBA
 const CurriculaPBA = {
@@ -199,10 +148,10 @@ const CurriculaPBA = {
          "CienciasSociales": ["Historia Argentina", "Independencia", "Economía", "Participación ciudadana"]}
 };
 
-// VOZ DE MERLÍN
+// VOZ DE MERLÍN - SABIA Y TRANQUILA
 const VozMerlin = {
   activa:true, recognition: null, estaEscuchando: false,
-  hablar:(t)=>{ if(window.speechSynthesis){speechSynthesis.cancel(); const v=new SpeechSynthesisUtterance(t); v.lang="es-AR"; v.rate=0.78; v.pitch=0.88; speechSynthesis.speak(v);} },
+  hablar:(t)=>{ if(window.speechSynthesis){speechSynthesis.cancel(); const v=new SpeechSynthesisUtterance(t); v.lang="es-AR"; v.rate=0.75; v.pitch=0.85; speechSynthesis.speak(v);} },
   alternar:()=>{ VozMerlin.activa=!VozMerlin.activa; if(!VozMerlin.activa) speechSynthesis.cancel(); },
   iniciarEscucha: function(){
     if(this.estaEscuchando) return;
@@ -223,44 +172,68 @@ const VozMerlin = {
   detenerEscucha: function(){ if(this.recognition && this.estaEscuchando) { this.recognition.stop(); this.estaEscuchando = false; } }
 };
 
-// SABIDURÍA + TABLAS DIRECTAS + NÚCLEO
+// SABIDURÍA - SIGUE EL RITMO, NO CORTE, NO PIERDE EL ORDEN
 const Sabiduria = {
+  ultimoTema: null,
+  ultimaMateria: null,
+  ultimoGrado: null,
+
   limpiarTexto: function(texto){ return texto.replace("🎤 Te escucho...", "").replace("🔍 Buscando", "").trim(); },
+
+  // AVISA SUAVE SI SE SALTAN UN TEMA O CAMBIAN DE MATERIA
+  chequearCambios: function(grado, materia, temaNuevo){
+    let aviso = "";
+    if(this.ultimaMateria && this.ultimaMateria !== materia){
+      aviso += `\n\n💡 Cambiamos de rama: dejamos ${this.ultimaMateria} y vamos a ${materia}. Te lo explico igual.`;
+    }
+    if(this.ultimoGrado && this.ultimoGrado !== grado){
+      aviso += `\n\n💡 También cambiamos de grado, perfecto.`;
+    }
+    if(this.ultimoTema && this.ultimoTema !== temaNuevo){
+      const orden = CurriculaPBA[grado][materia];
+      const posAnt = orden ? orden.indexOf(this.ultimoTema) : -1;
+      const posNue = orden ? orden.indexOf(temaNuevo) : -1;
+      if(posAnt >=0 && posNue >=0 && posNue > posAnt +1){
+        aviso += `\n\n💡 Te aviso: esto suele ir después de lo que veíamos, pero acá lo tenés.`;
+      }
+    }
+    return aviso;
+  },
+
   traer: async function(tema){
     tema = this.limpiarTexto(tema);
+    const grado = document.getElementById("grado").value;
+    const materia = document.getElementById("materia").value;
+    const aviso = this.chequearCambios(grado, materia, tema);
 
-    // RESPUESTA INMEDIATA PARA TABLAS
+    // RESPUESTA A TABLAS
     if(tema.toLowerCase().includes("tabla del")){
       const numero = tema.match(/\d+/)?.[0];
       if(numero){
-        let tabla = `🧮 TABLA DEL ${numero}:\n\n`;
+        let tabla = `🧮 Mirá pibe, la tabla del ${numero} va así:\n\n`;
         for(let i=1;i<=10;i++) tabla += `${numero} × ${i} = ${numero*i}\n`;
+        tabla += aviso + `\n¿Te quedó claro?`;
+
         document.getElementById("cajaTexto").innerText = tabla;
-        VozMerlin.hablar(tabla);
-        NUCLEO.guardar(`tabla_${numero}`, tabla);
+        VozMerlin.hablar(`Mirá pibe, la tabla del ${numero} va así... ${aviso ? 'Vamos cambiando lo que haga falta.' : ''} ¿Te quedó claro?`);
+        this.ultimoTema = tema;
+        this.ultimaMateria = materia;
+        this.ultimoGrado = grado;
         Merlyn.ganarXP(5);
         return;
       }
     }
 
-    // RESTO DE LA BÚSQUEDA NORMAL
-    document.getElementById("cajaTexto").innerText = "🔍 Consultando al núcleo...";
-    let textoPBA = `Según el Diseño Curricular de PBA para "${tema}":\nVamos a aprender los conceptos básicos paso a paso.`;
-    document.getElementById("cajaTexto").innerHTML = `🧙‍♂️ ${tema}\n\n${textoPBA}\n\n<div class="fuente">📚 Fuente: Diseño Curricular PBA + NÚCLEO</div>`;
-    try {
-      const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://es.wikipedia.org/api/rest_v1/page/summary/${tema}`)}`;
-      const r = await fetch(url, {signal: AbortSignal.timeout(3000)});
-      if(r.ok){
-        const datos = await r.json();
-        if(datos.extract){
-          document.getElementById("cajaTexto").innerHTML = `🧙‍♂️ ${tema}\n\n${textoPBA}\n\n---\n📖 AMPLIACIÓN:\n${datos.extract}\n\n<div class="fuente">📚 Fuente: PBA + NÚCLEO + Wikipedia</div>`;
-          VozMerlin.hablar(`En ${tema}: ${datos.extract.substring(0,250)}`);
-          NUCLEO.guardar(`tema_${tema}`, datos.extract);
-          return;
-        }
-      }
-    } catch(e){}
-    VozMerlin.hablar(`En ${tema}: ${textoPBA.substring(0,200)}`);
+    // EXPLICACIÓN GENERAL
+    document.getElementById("cajaTexto").innerText = "🔍 Consultando despacio...";
+    let base = `Mirá, esto es lo que tenés que saber sobre "${tema}":\nLo vemos sin apuro.` + aviso;
+    document.getElementById("cajaTexto").innerText = base;
+    VozMerlin.hablar(`Mirá sobre ${tema}, lo vemos despacio.`);
+
+    this.ultimoTema = tema;
+    this.ultimaMateria = materia;
+    this.ultimoGrado = grado;
+    Merlyn.ganarXP(10);
   }
 };
 
@@ -268,18 +241,18 @@ const Sabiduria = {
 const CamaraMerlin = {
   limite:10,
   disponibles:()=>{const h=new Date().toLocaleDateString(); const d=JSON.parse(localStorage.getItem("camara")||`{"fecha":"${h}","usados":0}`); if(d.fecha!==h) d.fecha=h,d.usados=0; NUCLEO.guardar("camara",d); return 10-d.usados;},
-  abrir:()=>{ if(CamaraMerlin.disponibles()<=0) return VozMerlin.hablar("Hoy usaste las 10 fotos."); const i=document.createElement("input"); i.type="file"; i.accept="image/*"; i.capture="environment"; i.onchange=()=>{const d=NUCLEO.cargar("camara")||{usados:0}; d.usados++; NUCLEO.guardar("camara",d); document.getElementById("cuenta-foto").innerText=CamaraMerlin.disponibles(); VozMerlin.hablar("Imagen recibida."); Merlyn.ganarXP(15);}; i.click();}
+  abrir:()=>{ if(CamaraMerlin.disponibles()<=0) return VozMerlin.hablar("Hoy usaste las 10 fotos. Mañana volvemos."); const i=document.createElement("input"); i.type="file"; i.accept="image/*"; i.capture="environment"; i.onchange=()=>{const d=NUCLEO.cargar("camara")||{usados:0}; d.usados++; NUCLEO.guardar("camara",d); document.getElementById("cuenta-foto").innerText=CamaraMerlin.disponibles(); VozMerlin.hablar("Imagen recibida. Vamos a verla juntos."); Merlyn.ganarXP(15);}; i.click();}
 };
 
-// NÚCLEO DE MERLÍN
+// MERLÍN - EL QUE ACOMPAÑA Y SIGUE
 const Merlyn = {
   alumno: NUCLEO.cargar("alumno") || {xp:0, nivel:1},
   chequearActualizacion: function(){
     const ultimaVersion = NUCLEO.cargar("version");
-    if(ultimaVersion !== "v2.2.6"){
+    if(ultimaVersion !== "v2.4.0"){
       document.getElementById("alerta").style.display = "block";
-      VozMerlin.hablar("Se actualizó el plan de estudios.");
-      NUCLEO.guardar("version", "v2.2.6");
+      VozMerlin.hablar("Estamos listos para aprender juntos.");
+      NUCLEO.guardar("version", "v2.4.0");
       setTimeout(()=>document.getElementById("alerta").style.display="none", 5000);
     }
   },
@@ -295,9 +268,9 @@ const Merlyn = {
     document.getElementById("xp").innerText=`Nivel ${this.alumno.nivel} · ${this.alumno.xp} XP`; 
     NUCLEO.guardar("alumno", this.alumno); 
   },
-  explicar: async function(){ let tema = Sabiduria.limpiarTexto(document.getElementById("cajaTexto").innerText); if(!tema || tema.includes("Elegí")) return VozMerlin.hablar("Primero elegí un tema"); await Sabiduria.traer(tema); this.ganarXP(10); },
+  explicar: async function(){ let tema = Sabiduria.limpiarTexto(document.getElementById("cajaTexto").innerText); if(!tema) return VozMerlin.hablar("Escribí o elegí algo que quieras saber."); await Sabiduria.traer(tema); this.ganarXP(10); },
   repasar: async function(){ this.explicar(); this.ganarXP(5); },
-  examen: function(){ let tema = Sabiduria.limpiarTexto(document.getElementById("cajaTexto").innerText); document.getElementById("cajaTexto").innerText=`🎯 EVALUACIÓN\nExplica con tus palabras: ¿Qué aprendiste de ${tema}?`; VozMerlin.hablar(`Te pregunto sobre ${tema}`); }
+  examen: function(){ let tema = Sabiduria.limpiarTexto(document.getElementById("cajaTexto").innerText); document.getElementById("cajaTexto").innerText=`🎯 A ver... ¿Qué es lo que más te quedó de "${tema}"? Contame con tus palabras.`; VozMerlin.hablar(`A ver, contame con tus palabras qué aprendiste de ${tema}`); }
 };
 
 // MICRÓFONO TIPO WHATSAPP
@@ -311,16 +284,14 @@ b.addEventListener("mouseleave", ()=>{if(presionando){presionando=false; VozMerl
 
 // INICIO FINAL
 window.onload=()=>{
-  CONEXION.verificar();
-  window.addEventListener('online', CONEXION.verificar);
-  window.addEventListener('offline', CONEXION.verificar);
   Merlyn.chequearActualizacion();
   Merlyn.cargarTemas();
   document.getElementById("xp").innerText=`Nivel ${Merlyn.alumno.nivel} · ${Merlyn.alumno.xp} XP`;
   document.getElementById("cuenta-foto").innerText=CamaraMerlin.disponibles();
-  document.getElementById("cajaTexto").onclick = function(){if(this.innerText==="Elegí grado, materia y un tema...") this.innerText="";};
-  console.log("✅ MERLÍN FINAL · TODO GUARDADO EN MICROTECH.SAB");
+  VozMerlin.hablar("Hola. Soy Merlín. Estoy acá para aprender con vos, al ritmo que vos quieras.");
+  console.log("✅ MERLÍN v2.4.0 · SIGUE TU RITMO · LISTO");
 };
 </script>
 </body>
-</html>
+        </html>
+    
