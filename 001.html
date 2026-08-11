@@ -1,7 +1,7 @@
 <!-- ======================================================
-🧙‍♂️ MERLÍN · VERSIÓN BLINDADA v2.8.1
+🧙‍♂️ MERLÍN · v2.6.2 · SELECCIÓN AUTOMÁTICA + BUSCADOR OCULTO
 © MICTROTECH · Rodrigo Emiliano Urbino
-🛡️ CORREGIDO: CARGA, EVENTOS Y LIMPIEZA AUTOMÁTICA
+🛡️ AL TOCAR EL TEMA → PEGA Y EXPLICA SOLO
 🏫 DESTINO: E.P. N°10 "PROVINCIA DE CÓRDOBA"
 ====================================================== -->
 <!DOCTYPE html>
@@ -44,22 +44,21 @@
     .btn-copiar { background:#D4AF37; color:#050508; border:none; border-radius:8px; padding:6px 10px; font-size:0.8rem; cursor:pointer; font-weight:700; }
     .btn-copiar:active { transform:scale(0.95); }
     .pie { text-align: center; padding: 2rem 1rem; color: #777; font-size: 0.85rem; border-top: 1px solid #222; margin-top: 2rem; }
-    @media(max-width:500px){.dato-apoyo{justify-content:center; text-align:center} .botones-fila{grid-template-columns:repeat(3,1fr)} }
+    @media(max-width:500px){.dato-apoyo{justify-content:center; text-align:center} .botones-fila{grid-template-columns:repeat(2,1fr)} }
   </style>
 </head>
 <body>
 
   <h1 class="titulo">🧙‍♂️ MERLÍN</h1>
-  <p class="subtitulo">v2.8.1 · BLINDADO · E.P. N°10</p>
+  <p class="subtitulo">v2.6.2 · AL TOCAR EXPLICA SOLO · E.P. N°10</p>
   <p class="xp" id="xp">Nivel 1 · 0 XP</p>
 
   <div class="selector">
-    <!-- SIN ONCHANGE AHORA: SE CARGA DESDE EL SCRIPT -->
-    <select id="grado">
+    <select id="grado" onchange="Merlyn.cargarTemas()">
       <option value="1">1° Grado</option><option value="2">2° Grado</option><option value="3">3° Grado</option>
       <option value="4">4° Grado</option><option value="5">5° Grado</option><option value="6">6° Grado</option>
     </select>
-    <select id="materia">
+    <select id="materia" onchange="Merlyn.cargarTemas()">
       <option value="Matematica">Matemática</option><option value="Lengua">Lengua</option><option value="CienciasNaturales">Ciencias Naturales</option><option value="CienciasSociales">Ciencias Sociales</option>
     </select>
   </div>
@@ -93,9 +92,6 @@
   </footer>
 
 <script>
-// ======================================================
-// 🧙‍♂️ NÚCLEO + ESCAPADITA + CARGA SEGURA
-// ======================================================
 const NUCLEO = {
   ARCHIVO: "mictrotech.sab",
   guardar: function(clave, valor){
@@ -109,10 +105,40 @@ const NUCLEO = {
   }
 };
 
-const BLOQUE_TEMPORAL = {
-  limpiar: () => localStorage.removeItem("merlin_escapadita"),
-  guardar: (texto) => localStorage.setItem("merlin_escapadita", texto),
-  leer: () => localStorage.getItem("merlin_escapadita") || null
+const BUFFER_OCULTO = {
+  datos: "",
+  guardar: function(texto){ this.datos += (this.datos ? "\n" : "") + texto; },
+  leer: function(){ return this.datos; },
+  limpiar: function(){ this.datos = ""; }
+};
+
+const BuscadorOculto = {
+  async buscarWiki(tema){
+    try{
+      const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://es.wikipedia.org/api/rest_v1/page/summary/${tema}`)}`;
+      const res = await fetch(url, {signal: AbortSignal.timeout(5000)});
+      if(res.ok){
+        const d = await res.json();
+        if(d.extract) BUFFER_OCULTO.guardar(`📚 WIKIPEDIA:\n${d.extract}`);
+      }
+    }catch(e){}
+  },
+  async buscarGoogle(tema){
+    try{
+      const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://es.wikipedia.org/api/rest_v1/page/summary/${tema}`)}`;
+      const res = await fetch(url, {signal: AbortSignal.timeout(5000)});
+      if(res.ok){
+        const d = await res.json();
+        if(d.extract) BUFFER_OCULTO.guardar(`🔎 MÁS INFO:\n${d.extract}`);
+      }
+    }catch(e){}
+  },
+  async ejecutar(tema){
+    BUFFER_OCULTO.limpiar();
+    await this.buscarWiki(tema);
+    await this.buscarGoogle(tema);
+    return BUFFER_OCULTO.leer();
+  }
 };
 
 function copiar(id){
@@ -175,22 +201,13 @@ const VozMerlin = {
 
 const Sabiduria = {
   ultimoTema: null, ultimaMateria: null, ultimoGrado: null,
-
   limpiarTexto: function(texto){ return texto.replace("🎤 Te escucho...", "").replace("🔍 Buscando", "").trim(); },
-
   chequearCambios: function(grado, materia, temaNuevo){
     let aviso = "";
     if(this.ultimaMateria && this.ultimaMateria !== materia) aviso += `\n\n💡 Cambiamos de rama: dejamos ${this.ultimaMateria} y vamos a ${materia}. Te lo explico igual.`;
     if(this.ultimoGrado && this.ultimoGrado !== grado) aviso += `\n\n💡 También cambiamos de grado, perfecto.`;
-    if(this.ultimoTema && this.ultimoTema !== temaNuevo){
-      const orden = CurriculaPBA[grado]?.[materia];
-      const posAnt = orden ? orden.indexOf(this.ultimoTema) : -1;
-      const posNue = orden ? orden.indexOf(temaNuevo) : -1;
-      if(posAnt >=0 && posNue >=0 && posNue > posAnt +1) aviso += `\n\n💡 Te aviso: esto suele ir después de lo que veíamos, pero acá lo tenés.`;
-    }
     return aviso;
   },
-
   respuestasListas: {
     "suma": `🧮 Mirá pibe, las sumas son así:
 Sumar es juntar cosas y decir cuántas hay en total.
@@ -233,50 +250,22 @@ En la escuela: Es el número que te ponen. Del 1 al 10.
 
 ¿De cuál de las dos querías saber?`
   },
-
-  buscarEnInternet: async function(tema){
-    try{
-      const urlWiki = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://es.wikipedia.org/api/rest_v1/page/summary/${tema}`)}`;
-      const res = await fetch(urlWiki, {signal: AbortSignal.timeout(4000)});
-      if(res.ok){
-        const datos = await res.json();
-        if(datos.extract) return `\n📚 Más información:\n${datos.extract}`;
-      }
-    }catch(e){}
-    return null;
-  },
-
   traer: async function(tema){
     tema = this.limpiarTexto(tema).toLowerCase();
     const grado = document.getElementById("grado").value;
     const materia = document.getElementById("materia").value;
     const aviso = this.chequearCambios(grado, materia, tema);
-
     let contenido = "";
     for(let clave in this.respuestasListas){
-      if(tema.includes(clave)){
-        contenido = this.respuestasListas[clave];
-        break;
-      }
+      if(tema.includes(clave)){ contenido = this.respuestasListas[clave]; break; }
     }
-
     if(!contenido){
-      document.getElementById("cajaTexto").innerText = "🔍 Salgo a buscar...";
-      BLOQUE_TEMPORAL.guardar("TRAYENDO...");
-      let extra = await this.buscarEnInternet(tema);
-      contenido = extra || `Mirá sobre esto: lo vemos despacio.`;
+      document.getElementById("cajaTexto").innerText = "🔍 Buscando en silencio...";
+      const infoBuffer = await BuscadorOculto.ejecutar(tema);
+      contenido = infoBuffer || `Mirá sobre esto: lo vemos despacio.`;
     }
-
-    // ✅ AHORA LIMPIA DESPUÉS DE USARLO
-    BLOQUE_TEMPORAL.guardar(contenido);
-    document.getElementById("cajaTexto").innerText = "🧠 Lo ordeno...";
-    const infoSegura = BLOQUE_TEMPORAL.leer();
-    BLOQUE_TEMPORAL.limpiar(); // LIMPIEZA FINAL
-    const respuestaFinal = infoSegura + aviso;
-
-    document.getElementById("cajaTexto").innerText = respuestaFinal;
-    VozMerlin.hablar(respuestaFinal.substring(0,250) + " ¿Te quedó claro?");
-    
+    document.getElementById("cajaTexto").innerText = contenido + aviso;
+    VozMerlin.hablar(contenido.substring(0,250) + " ¿Te quedó claro?");
     this.ultimoTema = tema; this.ultimaMateria = materia; this.ultimoGrado = grado;
     Merlyn.ganarXP(10);
   }
@@ -285,7 +274,7 @@ En la escuela: Es el número que te ponen. Del 1 al 10.
 const CamaraMerlin = {
   limite:10,
   disponibles:()=>{const h=new Date().toLocaleDateString(); const d=JSON.parse(localStorage.getItem("camara")||`{"fecha":"${h}","usados":0}`); if(d.fecha!==h) d.fecha=h,d.usados=0; NUCLEO.guardar("camara",d); return 10-d.usados;},
-  abrir:()=>{ if(CamaraMerlin.disponibles()<=0) return VozMerlin.hablar("Hoy usaste las 10 fotos. Mañana volvemos."); const i=document.createElement("input"); i.type="file"; i.accept="image/*"; i.capture="environment"; i.onchange=()=>{const d=NUCLEO.cargar("camara")||{usados:0}; d.usados++; NUCLEO.guardar("camara",d); document.getElementById("cuenta-foto").innerText=CamaraMerlin.disponibles(); VozMerlin.hablar("Imagen recibida."); Merlyn.ganarXP(15);}; i.click();}
+  abrir:()=>{ if(CamaraMerlin.disponibles()<=0) return VozMerlin.hablar("Hoy usaste las 10 fotos. Mañana seguimos."); const i=document.createElement("input"); i.type="file"; i.accept="image/*"; i.capture="environment"; i.onchange=()=>{const d=NUCLEO.cargar("camara")||{usados:0}; d.usados++; NUCLEO.guardar("camara",d); document.getElementById("cuenta-foto").innerText=CamaraMerlin.disponibles(); VozMerlin.hablar("Imagen recibida."); Merlyn.ganarXP(15);}; i.click();}
 };
 
 const Merlyn = {
@@ -295,36 +284,28 @@ const Merlyn = {
     const temas = CurriculaPBA[g][m];
     document.getElementById("temas").innerHTML = temas.map(t=>`<button class="btn-tema" onclick="Merlyn.seleccionarTema('${t}', this)">${t}</button>`).join("");
   },
-  seleccionarTema: function(tema, btn){ document.getElementById("cajaTexto").innerText = tema; document.querySelectorAll(".btn-tema").forEach(b=>b.classList.remove("activa")); btn.classList.add("activa"); },
-  ganarXP: function(c){ 
-    this.alumno.xp+=c; this.alumno.nivel=Math.floor(this.alumno.xp/100)+1; 
-    document.getElementById("xp").innerText=`Nivel ${this.alumno.nivel} · ${this.alumno.xp} XP`; 
-    NUCLEO.guardar("alumno", this.alumno); 
+
+  // ✅ LO QUE ME PEDISTE: AL TOCAR → PEGA Y EXPLICA SOLO
+  seleccionarTema: function(tema, btn){
+    document.getElementById("cajaTexto").innerText = tema;
+    document.querySelectorAll(".btn-tema").forEach(b=>b.classList.remove("activa"));
+    btn.classList.add("activa");
+    setTimeout(() => { Merlyn.explicar(); }, 300);
   },
-  explicar: async function(){ let tema = Sabiduria.limpiarTexto(document.getElementById("cajaTexto").innerText); if(!tema) return VozMerlin.hablar("Decime qué querés saber."); await Sabiduria.traer(tema); this.ganarXP(10); },
+
+  ganarXP: function(c){ this.alumno.xp+=c; this.alumno.nivel=Math.floor(this.alumno.xp/100)+1; document.getElementById("xp").innerText=`Nivel ${this.alumno.nivel} · ${this.alumno.xp} XP`; NUCLEO.guardar("alumno", this.alumno); },
+  explicar: async function(){ let tema = Sabiduria.limpiarTexto(document.getElementById("cajaTexto").innerText); if(!tema) return VozMerlin.hablar("Escribí o elegí qué querés saber."); await Sabiduria.traer(tema); this.ganarXP(10); },
   repasar: async function(){ this.explicar(); this.ganarXP(5); },
-  examen: function(){ let tema = Sabiduria.limpiarTexto(document.getElementById("cajaTexto").innerText); document.getElementById("cajaTexto").innerText=`🎯 A ver... ¿Qué es lo que más te quedó? Contame con tus palabras.`; VozMerlin.hablar("A ver, contame con tus palabras qué aprendiste."); }
+  examen: function(){ let tema = Sabiduria.limpiarTexto(document.getElementById("cajaTexto").innerText); document.getElementById("cajaTexto").innerText=`🎯 A ver... ¿Qué es lo que más te quedó de ${tema}?`; VozMerlin.hablar("Contame con tus palabras qué aprendiste."); }
 };
 
-// ✅ TODO SE CARGA Y SE VINCULA BIEN AHORA
-document.addEventListener("DOMContentLoaded", () => {
+window.onload = () => {
   Merlyn.cargarTemas();
   document.getElementById("xp").innerText=`Nivel ${Merlyn.alumno.nivel} · ${Merlyn.alumno.xp} XP`;
   document.getElementById("cuenta-foto").innerText=CamaraMerlin.disponibles();
-  VozMerlin.hablar("Hola. Soy Merlín. Ya funciona todo bien.");
-  console.log("✅ MERLÍN v2.8.1 · BLINDADO Y LISTO");
-
-  let presionando = false;
-  const b = document.getElementById("btnMicro");
-  b.addEventListener("mousedown", ()=>{presionando=true; VozMerlin.iniciarEscucha();});
-  b.addEventListener("mouseup", ()=>{presionando=false; VozMerlin.detenerEscucha();});
-  b.addEventListener("touchstart", e=>{e.preventDefault(); presionando=true; VozMerlin.iniciarEscucha();});
-  b.addEventListener("touchend", ()=>{presionando=false; VozMerlin.detenerEscucha();});
-
-  document.getElementById("grado").addEventListener("change", Merlyn.cargarTemas);
-  document.getElementById("materia").addEventListener("change", Merlyn.cargarTemas);
-});
+  VozMerlin.hablar("Hola. Tocá un tema y te lo explico solo.");
+  console.log("✅ MERLÍN v2.6.2 · AUTOMÁTICO + BUSCADOR OCULTO");
+};
 </script>
 </body>
   </html>
-      
