@@ -1,7 +1,6 @@
 <!-- ======================================================
-🧙‍♂️ MERLÍN · v2.6.2 · SELECCIÓN AUTOMÁTICA + BUSCADOR OCULTO
+🧙‍♂️ MERLÍN · VERSIÓN 2.6.0
 © MICTROTECH · Rodrigo Emiliano Urbino
-🛡️ AL TOCAR EL TEMA → PEGA Y EXPLICA SOLO
 🏫 DESTINO: E.P. N°10 "PROVINCIA DE CÓRDOBA"
 ====================================================== -->
 <!DOCTYPE html>
@@ -9,7 +8,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MERLÍN · E.P. N°10</title>
+  <title>MERLÍN v2.6.0 · E.P. N°10</title>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui, -apple-system, sans-serif; }
     body { background: linear-gradient(180deg, #050508 0%, #111827 100%); min-height:100vh; padding:1.5rem; color: #e0e0e0; }
@@ -37,20 +36,14 @@
     .btn-explicar { background: #D4AF37; color: #050508; }
     .btn-repasar { background: #1a365d; color: white; }
     .btn-examen { background: #c53030; color: white; }
-    .seccion-apoyo { background: rgba(15,20,30,0.9); border: 1px solid #D4AF37; border-radius: 16px; padding: 1.5rem; margin: 2rem 0; text-align:center; }
-    .seccion-apoyo h3 { color: #D4AF37; font-size: 1.4rem; margin-bottom: 1rem; }
-    .dato-apoyo { margin: 0.7rem 0; color: #e0e0e0; font-size: 0.95rem; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
-    .valor-apoyo { color: #D4AF37; font-weight: 600; font-family: monospace; word-break:break-all; }
-    .btn-copiar { background:#D4AF37; color:#050508; border:none; border-radius:8px; padding:6px 10px; font-size:0.8rem; cursor:pointer; font-weight:700; }
-    .btn-copiar:active { transform:scale(0.95); }
     .pie { text-align: center; padding: 2rem 1rem; color: #777; font-size: 0.85rem; border-top: 1px solid #222; margin-top: 2rem; }
-    @media(max-width:500px){.dato-apoyo{justify-content:center; text-align:center} .botones-fila{grid-template-columns:repeat(2,1fr)} }
+    @media(max-width:500px){ .botones-fila{grid-template-columns:repeat(2,1fr)} }
   </style>
 </head>
 <body>
 
-  <h1 class="titulo">🧙‍♂️ MERLÍN</h1>
-  <p class="subtitulo">v2.6.2 · AL TOCAR EXPLICA SOLO · E.P. N°10</p>
+  <h1 class="titulo">🧙‍♂️ MERLÍN v2.6.0</h1>
+  <p class="subtitulo">En desarrollo · E.P. N°10</p>
   <p class="xp" id="xp">Nivel 1 · 0 XP</p>
 
   <div class="selector">
@@ -78,15 +71,6 @@
     <button class="btn-accion btn-examen" onclick="Merlyn.examen()">🎯 Evaluar</button>
   </div>
 
-  <section class="seccion-apoyo">
-    <h3>🤝 APOYÁ ESTE PROYECTO</h3>
-    <p style="color:#ccc; margin-bottom:1rem;">Merlín es y será gratuito para siempre.</p>
-    <p class="dato-apoyo"><strong>Titular:</strong> <span class="valor-apoyo">Rodrigo Emiliano Urbino</span></p>
-    <p class="dato-apoyo"><strong>Alias:</strong> <span class="valor-apoyo" id="alias">AVES.BRUMA.OFICIO</span> <button class="btn-copiar" onclick="copiar('alias')">Copiar</button></p>
-    <p class="dato-apoyo"><strong>CBU:</strong> <span class="valor-apoyo" id="cbu">384020050000005179327</span> <button class="btn-copiar" onclick="copiar('cbu')">Copiar</button></p>
-    <p class="dato-apoyo"><strong>Banco:</strong> <span class="valor-apoyo">Ualá Bank S.A.U.</span></p>
-  </section>
-
   <footer class="pie">
     © 2026 MICTROTECH · Rodrigo Emiliano Urbino
   </footer>
@@ -104,50 +88,6 @@ const NUCLEO = {
     return datos[clave] || null;
   }
 };
-
-const BUFFER_OCULTO = {
-  datos: "",
-  guardar: function(texto){ this.datos += (this.datos ? "\n" : "") + texto; },
-  leer: function(){ return this.datos; },
-  limpiar: function(){ this.datos = ""; }
-};
-
-const BuscadorOculto = {
-  async buscarWiki(tema){
-    try{
-      const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://es.wikipedia.org/api/rest_v1/page/summary/${tema}`)}`;
-      const res = await fetch(url, {signal: AbortSignal.timeout(5000)});
-      if(res.ok){
-        const d = await res.json();
-        if(d.extract) BUFFER_OCULTO.guardar(`📚 WIKIPEDIA:\n${d.extract}`);
-      }
-    }catch(e){}
-  },
-  async buscarGoogle(tema){
-    try{
-      const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://es.wikipedia.org/api/rest_v1/page/summary/${tema}`)}`;
-      const res = await fetch(url, {signal: AbortSignal.timeout(5000)});
-      if(res.ok){
-        const d = await res.json();
-        if(d.extract) BUFFER_OCULTO.guardar(`🔎 MÁS INFO:\n${d.extract}`);
-      }
-    }catch(e){}
-  },
-  async ejecutar(tema){
-    BUFFER_OCULTO.limpiar();
-    await this.buscarWiki(tema);
-    await this.buscarGoogle(tema);
-    return BUFFER_OCULTO.leer();
-  }
-};
-
-function copiar(id){
-  const texto = document.getElementById(id).innerText;
-  navigator.clipboard.writeText(texto).then(()=>{
-    VozMerlin.hablar("Copiado");
-    alert("Copiado: " + texto);
-  });
-}
 
 const CurriculaPBA = {
   "1": { "Matematica": ["Números hasta 100", "Sumas y restas", "Figuras geométricas", "Pensamiento computacional"],
@@ -250,20 +190,21 @@ En la escuela: Es el número que te ponen. Del 1 al 10.
 
 ¿De cuál de las dos querías saber?`
   },
+  buscarEnInternet: async function(tema){
+    try{
+      const urlWiki = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://es.wikipedia.org/api/rest_v1/page/summary/${tema}`)}`;
+      const res = await fetch(urlWiki, {signal: AbortSignal.timeout(4000)});
+      if(res.ok){ const datos = await res.json(); if(datos.extract) return `\n📚 Más información:\n${datos.extract}`; }
+    }catch(e){} return null;
+  },
   traer: async function(tema){
     tema = this.limpiarTexto(tema).toLowerCase();
     const grado = document.getElementById("grado").value;
     const materia = document.getElementById("materia").value;
     const aviso = this.chequearCambios(grado, materia, tema);
     let contenido = "";
-    for(let clave in this.respuestasListas){
-      if(tema.includes(clave)){ contenido = this.respuestasListas[clave]; break; }
-    }
-    if(!contenido){
-      document.getElementById("cajaTexto").innerText = "🔍 Buscando en silencio...";
-      const infoBuffer = await BuscadorOculto.ejecutar(tema);
-      contenido = infoBuffer || `Mirá sobre esto: lo vemos despacio.`;
-    }
+    for(let clave in this.respuestasListas){ if(tema.includes(clave)){ contenido = this.respuestasListas[clave]; break; } }
+    if(!contenido){ document.getElementById("cajaTexto").innerText = "🔍 Buscando..."; let extra = await this.buscarEnInternet(tema); contenido = extra || `Mirá sobre esto: lo vemos despacio.`; }
     document.getElementById("cajaTexto").innerText = contenido + aviso;
     VozMerlin.hablar(contenido.substring(0,250) + " ¿Te quedó claro?");
     this.ultimoTema = tema; this.ultimaMateria = materia; this.ultimoGrado = grado;
@@ -284,15 +225,7 @@ const Merlyn = {
     const temas = CurriculaPBA[g][m];
     document.getElementById("temas").innerHTML = temas.map(t=>`<button class="btn-tema" onclick="Merlyn.seleccionarTema('${t}', this)">${t}</button>`).join("");
   },
-
-  // ✅ LO QUE ME PEDISTE: AL TOCAR → PEGA Y EXPLICA SOLO
-  seleccionarTema: function(tema, btn){
-    document.getElementById("cajaTexto").innerText = tema;
-    document.querySelectorAll(".btn-tema").forEach(b=>b.classList.remove("activa"));
-    btn.classList.add("activa");
-    setTimeout(() => { Merlyn.explicar(); }, 300);
-  },
-
+  seleccionarTema: function(tema, btn){ document.getElementById("cajaTexto").innerText = tema; document.querySelectorAll(".btn-tema").forEach(b=>b.classList.remove("activa")); btn.classList.add("activa"); },
   ganarXP: function(c){ this.alumno.xp+=c; this.alumno.nivel=Math.floor(this.alumno.xp/100)+1; document.getElementById("xp").innerText=`Nivel ${this.alumno.nivel} · ${this.alumno.xp} XP`; NUCLEO.guardar("alumno", this.alumno); },
   explicar: async function(){ let tema = Sabiduria.limpiarTexto(document.getElementById("cajaTexto").innerText); if(!tema) return VozMerlin.hablar("Escribí o elegí qué querés saber."); await Sabiduria.traer(tema); this.ganarXP(10); },
   repasar: async function(){ this.explicar(); this.ganarXP(5); },
@@ -303,9 +236,9 @@ window.onload = () => {
   Merlyn.cargarTemas();
   document.getElementById("xp").innerText=`Nivel ${Merlyn.alumno.nivel} · ${Merlyn.alumno.xp} XP`;
   document.getElementById("cuenta-foto").innerText=CamaraMerlin.disponibles();
-  VozMerlin.hablar("Hola. Tocá un tema y te lo explico solo.");
-  console.log("✅ MERLÍN v2.6.2 · AUTOMÁTICO + BUSCADOR OCULTO");
+  VozMerlin.hablar("Hola. Soy Merlín. ¿En qué te ayudo a estudiar?");
 };
 </script>
 </body>
-  </html>
+                                                                  </html>
+  
