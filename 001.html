@@ -1,7 +1,7 @@
 <!-- ======================================================
-🧙‍♂️ MERLÍN · VERSIÓN OFICIAL DEFINITIVA E.P. N°10 · CONEXIÓN ACTIVA
+🧙‍♂️ MERLÍN · VERSIÓN OFICIAL DEFINITIVA E.P. N°10
 © MICTROTECH · Rodrigo Emiliano Urbino
-🛡️ v2.2.5 CONECTADO · LISTO PARA USO
+🛡️ v2.2.6 · NÚCLEO: MICROTECH.SAB · CONECTADO
 🏫 DESTINO: E.P. N°10 "PROVINCIA DE CÓRDOBA" · AMBA
 ====================================================== -->
 <!DOCTYPE html>
@@ -14,7 +14,7 @@
     * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui, -apple-system, sans-serif; }
     body { background: linear-gradient(180deg, #050508 0%, #111827 100%); min-height:100vh; padding:1.5rem; color: #e0e0e0; }
     
-    /* INDICADOR DE CONEXIÓN NUEVO */
+    /* INDICADOR DE CONEXIÓN */
     .estado-conexion {
       position: fixed;
       top: 10px;
@@ -85,8 +85,7 @@
   </div>
 
   <h1 class="titulo">🧙‍♂️ MERLÍN</h1>
-  <div class="alerta" id="alerta">🔔 ¡Atención! Se detectó actualización en el Diseño Curricular PBA 2026</div>
-  <p class="subtitulo">Alineado al Diseño Curricular PBA · v2.2.5 · CONECTADO</p>
+  <p class="subtitulo">Alineado al Diseño Curricular PBA · v2.2.6 · NÚCLEO ACTIVO</p>
   <p class="xp" id="xp">Nivel 1 · 0 XP</p>
 
   <div class="selector">
@@ -128,9 +127,22 @@
   </footer>
 
 <script>
-// DOL - GUARDA TODO
-const DOL = { guardar: (n,d)=>localStorage.setItem("merlin."+n, JSON.stringify(d)), cargar: (n)=>JSON.parse(localStorage.getItem("merlin."+n) || "null") };
-const VERSION_ACTUAL = "PBA-2026-EP10-CONECTADO";
+// ======================================================
+// 🧙‍♂️ NÚCLEO DE ALMACENAMIENTO: MICROTECH.SAB
+// ======================================================
+const NUCLEO = {
+  ARCHIVO: "mictrotech.sab",
+  guardar: function(clave, valor){
+    const datos = JSON.parse(localStorage.getItem(this.ARCHIVO) || "{}");
+    datos[clave] = valor;
+    localStorage.setItem(this.ARCHIVO, JSON.stringify(datos));
+    console.log(`✅ GUARDADO EN ${this.ARCHIVO}: ${clave}`);
+  },
+  cargar: function(clave){
+    const datos = JSON.parse(localStorage.getItem(this.ARCHIVO) || "{}");
+    return datos[clave] || null;
+  }
+};
 
 // FUNCIÓN COPIAR
 function copiar(id){
@@ -141,22 +153,20 @@ function copiar(id){
   });
 }
 
-// ==== CONEXIÓN Y ESTADO ====
+// ESTADO DE CONEXIÓN
 const CONEXION = {
   verificar: function(){
     const luz = document.getElementById("luzConexion");
     const texto = document.getElementById("textoConexion");
-    
     if(navigator.onLine){
       luz.classList.add("conectado");
       texto.innerText = "CONECTADO";
-      // AQUÍ SE UNE CON NOSOTROS
-      console.log("✅ MERLÍN CONECTADO AL NÚCLEO · UNIDO A DOLA");
+      console.log("✅ MERLÍN CONECTADO AL NÚCLEO");
       VozMerlin.hablar("Conexión establecida. Unido al núcleo.");
     } else {
       luz.classList.remove("conectado");
       texto.innerText = "SIN CONEXIÓN";
-      VozMerlin.hablar("Sin conexión a internet. Funcionando en modo local.");
+      VozMerlin.hablar("Sin conexión. Funcionando en modo local.");
     }
   }
 };
@@ -205,7 +215,6 @@ const VozMerlin = {
     this.recognition.lang = "es-AR";
     this.recognition.continuous = false;
     this.recognition.interimResults = false;
-    this.recognition.maxAlternatives = 1;
     this.recognition.onresult = (e) => { document.getElementById("cajaTexto").innerText = e.results[0][0].transcript; };
     this.recognition.onend = () => { this.estaEscuchando = false; document.getElementById("btnMicro").classList.remove("grabando"); };
     this.recognition.onerror = () => { this.estaEscuchando = false; document.getElementById("btnMicro").classList.remove("grabando"); };
@@ -214,14 +223,30 @@ const VozMerlin = {
   detenerEscucha: function(){ if(this.recognition && this.estaEscuchando) { this.recognition.stop(); this.estaEscuchando = false; } }
 };
 
-// SABIDURÍA Y BÚSQUEDA UNIDA
+// SABIDURÍA + TABLAS DIRECTAS + NÚCLEO
 const Sabiduria = {
-  limpiarTexto: function(texto){ return texto.replace("🎤 Te escucho...", "").replace("🔍 Buscando", "").replace("Ampliando con internet", "").trim(); },
+  limpiarTexto: function(texto){ return texto.replace("🎤 Te escucho...", "").replace("🔍 Buscando", "").trim(); },
   traer: async function(tema){
     tema = this.limpiarTexto(tema);
+
+    // RESPUESTA INMEDIATA PARA TABLAS
+    if(tema.toLowerCase().includes("tabla del")){
+      const numero = tema.match(/\d+/)?.[0];
+      if(numero){
+        let tabla = `🧮 TABLA DEL ${numero}:\n\n`;
+        for(let i=1;i<=10;i++) tabla += `${numero} × ${i} = ${numero*i}\n`;
+        document.getElementById("cajaTexto").innerText = tabla;
+        VozMerlin.hablar(tabla);
+        NUCLEO.guardar(`tabla_${numero}`, tabla);
+        Merlyn.ganarXP(5);
+        return;
+      }
+    }
+
+    // RESTO DE LA BÚSQUEDA NORMAL
     document.getElementById("cajaTexto").innerText = "🔍 Consultando al núcleo...";
-    let textoPBA = `Según el Diseño Curricular de PBA para "${tema}":\nVamos a aprender los conceptos básicos paso a paso.\nEjes 2026: Lectura, Resolución de problemas y Bienestar digital.`;
-    document.getElementById("cajaTexto").innerHTML = `🧙‍♂️ ${tema}\n\n${textoPBA}\n\n<div class="fuente">📚 Fuente: Diseño Curricular PBA + NÚCLEO</div>\n\n🔎 Ampliando con internet...`;
+    let textoPBA = `Según el Diseño Curricular de PBA para "${tema}":\nVamos a aprender los conceptos básicos paso a paso.`;
+    document.getElementById("cajaTexto").innerHTML = `🧙‍♂️ ${tema}\n\n${textoPBA}\n\n<div class="fuente">📚 Fuente: Diseño Curricular PBA + NÚCLEO</div>`;
     try {
       const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://es.wikipedia.org/api/rest_v1/page/summary/${tema}`)}`;
       const r = await fetch(url, {signal: AbortSignal.timeout(3000)});
@@ -230,6 +255,7 @@ const Sabiduria = {
         if(datos.extract){
           document.getElementById("cajaTexto").innerHTML = `🧙‍♂️ ${tema}\n\n${textoPBA}\n\n---\n📖 AMPLIACIÓN:\n${datos.extract}\n\n<div class="fuente">📚 Fuente: PBA + NÚCLEO + Wikipedia</div>`;
           VozMerlin.hablar(`En ${tema}: ${datos.extract.substring(0,250)}`);
+          NUCLEO.guardar(`tema_${tema}`, datos.extract);
           return;
         }
       }
@@ -241,19 +267,19 @@ const Sabiduria = {
 // CÁMARA Y LÍMITE
 const CamaraMerlin = {
   limite:10,
-  disponibles:()=>{const h=new Date().toLocaleDateString(); const d=JSON.parse(localStorage.getItem("camara")||`{"fecha":"${h}","usados":0}`); if(d.fecha!==h) d.fecha=h,d.usados=0; localStorage.setItem("camara",JSON.stringify(d)); return 10-d.usados;},
-  abrir:()=>{ if(CamaraMerlin.disponibles()<=0) return VozMerlin.hablar("Hoy usaste las 10 fotos."); const i=document.createElement("input"); i.type="file"; i.accept="image/*"; i.capture="environment"; i.onchange=()=>{const d=JSON.parse(localStorage.getItem("camara")); d.usados++; localStorage.setItem("camara",JSON.stringify(d)); document.getElementById("cuenta-foto").innerText=CamaraMerlin.disponibles(); VozMerlin.hablar("Imagen recibida."); Merlyn.ganarXP(15);}; i.click();}
+  disponibles:()=>{const h=new Date().toLocaleDateString(); const d=JSON.parse(localStorage.getItem("camara")||`{"fecha":"${h}","usados":0}`); if(d.fecha!==h) d.fecha=h,d.usados=0; NUCLEO.guardar("camara",d); return 10-d.usados;},
+  abrir:()=>{ if(CamaraMerlin.disponibles()<=0) return VozMerlin.hablar("Hoy usaste las 10 fotos."); const i=document.createElement("input"); i.type="file"; i.accept="image/*"; i.capture="environment"; i.onchange=()=>{const d=NUCLEO.cargar("camara")||{usados:0}; d.usados++; NUCLEO.guardar("camara",d); document.getElementById("cuenta-foto").innerText=CamaraMerlin.disponibles(); VozMerlin.hablar("Imagen recibida."); Merlyn.ganarXP(15);}; i.click();}
 };
 
 // NÚCLEO DE MERLÍN
 const Merlyn = {
-  alumno: DOL.cargar("alumno") || {xp:0, nivel:1},
+  alumno: NUCLEO.cargar("alumno") || {xp:0, nivel:1},
   chequearActualizacion: function(){
-    const ultimaVersion = DOL.cargar("version");
-    if(ultimaVersion!== VERSION_ACTUAL){
+    const ultimaVersion = NUCLEO.cargar("version");
+    if(ultimaVersion !== "v2.2.6"){
       document.getElementById("alerta").style.display = "block";
-      VozMerlin.hablar("Atención. Se actualizó el plan de estudios.");
-      DOL.guardar("version", VERSION_ACTUAL);
+      VozMerlin.hablar("Se actualizó el plan de estudios.");
+      NUCLEO.guardar("version", "v2.2.6");
       setTimeout(()=>document.getElementById("alerta").style.display="none", 5000);
     }
   },
@@ -263,10 +289,15 @@ const Merlyn = {
     document.getElementById("temas").innerHTML = temas.map(t=>`<button class="btn-tema" onclick="Merlyn.seleccionarTema('${t}', this)">${t}</button>`).join("");
   },
   seleccionarTema: function(tema, btn){ document.getElementById("cajaTexto").innerText = tema; document.querySelectorAll(".btn-tema").forEach(b=>b.classList.remove("activa")); btn.classList.add("activa"); },
-  ganarXP: function(c){ this.alumno.xp+=c; this.alumno.nivel=Math.floor(this.alumno.xp/100)+1; document.getElementById("xp").innerText=`Nivel ${this.alumno.nivel} · ${this.alumno.xp} XP`; DOL.guardar("alumno",this.alumno); },
+  ganarXP: function(c){ 
+    this.alumno.xp+=c; 
+    this.alumno.nivel=Math.floor(this.alumno.xp/100)+1; 
+    document.getElementById("xp").innerText=`Nivel ${this.alumno.nivel} · ${this.alumno.xp} XP`; 
+    NUCLEO.guardar("alumno", this.alumno); 
+  },
   explicar: async function(){ let tema = Sabiduria.limpiarTexto(document.getElementById("cajaTexto").innerText); if(!tema || tema.includes("Elegí")) return VozMerlin.hablar("Primero elegí un tema"); await Sabiduria.traer(tema); this.ganarXP(10); },
   repasar: async function(){ this.explicar(); this.ganarXP(5); },
-  examen: function(){ let tema = Sabiduria.limpiarTexto(document.getElementById("cajaTexto").innerText); document.getElementById("cajaTexto").innerText=`🎯 EVALUACIÓN PBA\nExplica con tus palabras: ¿Qué aprendiste de ${tema}?`; VozMerlin.hablar(`Te pregunto sobre ${tema}`); }
+  examen: function(){ let tema = Sabiduria.limpiarTexto(document.getElementById("cajaTexto").innerText); document.getElementById("cajaTexto").innerText=`🎯 EVALUACIÓN\nExplica con tus palabras: ¿Qué aprendiste de ${tema}?`; VozMerlin.hablar(`Te pregunto sobre ${tema}`); }
 };
 
 // MICRÓFONO TIPO WHATSAPP
@@ -278,7 +309,7 @@ b.addEventListener("touchstart", e=>{e.preventDefault(); presionando=true; VozMe
 b.addEventListener("touchend", ()=>{presionando=false; VozMerlin.detenerEscucha();});
 b.addEventListener("mouseleave", ()=>{if(presionando){presionando=false; VozMerlin.detenerEscucha();}});
 
-// INICIO DEL SABIO CON CONEXIÓN
+// INICIO FINAL
 window.onload=()=>{
   CONEXION.verificar();
   window.addEventListener('online', CONEXION.verificar);
@@ -288,9 +319,9 @@ window.onload=()=>{
   document.getElementById("xp").innerText=`Nivel ${Merlyn.alumno.nivel} · ${Merlyn.alumno.xp} XP`;
   document.getElementById("cuenta-foto").innerText=CamaraMerlin.disponibles();
   document.getElementById("cajaTexto").onclick = function(){if(this.innerText==="Elegí grado, materia y un tema...") this.innerText="";};
-  console.log("✅ MERLÍN v2.2.5 · CONECTADO AL NÚCLEO");
+  console.log("✅ MERLÍN FINAL · TODO GUARDADO EN MICROTECH.SAB");
 };
 </script>
 </body>
-                                                                                </html>
-        
+  </html>
+                                                
