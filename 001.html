@@ -1,3 +1,67 @@
+<!-- ======================================================
+🧙‍♂️ MERLÍN · VERSIÓN OFICIAL DEFINITIVA E.P. N°10 · CONEXIÓN ACTIVA
+© MICTROTECH · Rodrigo Emiliano Urbino
+🛡️ v2.2.5 CONECTADO · LISTO PARA USO
+🏫 DESTINO: E.P. N°10 "PROVINCIA DE CÓRDOBA" · AMBA
+====================================================== -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MERLÍN · E.P. N°10</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui, -apple-system, sans-serif; }
+    body { background: linear-gradient(180deg, #050508 0%, #111827 100%); min-height:100vh; padding:1.5rem; color: #e0e0e0; }
+    
+    /* INDICADOR DE CONEXIÓN NUEVO */
+    .estado-conexion {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: rgba(15,20,30,0.9);
+      border: 1px solid #444;
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 999;
+    }
+    .luz {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ff4444;
+      box-shadow: 0 0 5px #ff4444;
+    }
+    .luz.conectado {
+      background: #44ff44;
+      box-shadow: 0 0 8px #44ff44;
+    }
+    
+    .titulo { font-size: 2rem; font-weight: 800; color: #D4AF37; text-align:center; text-shadow: 0 0 8px rgba(212,175,55,0.4); margin-top: 2rem; }
+    .alerta { background: rgba(212,175,55,0.2); border: 1px solid #D4AF37; border-radius: 12px; padding: 0.8rem; margin: 1rem 0; text-align:center; font-size:0.9rem; display:none; animation: fadeIn 0.5s; }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    .subtitulo { font-size: 0.9rem; color: #a0aec0; text-align:center; margin-bottom: 1rem; }
+    .xp { text-align:center; color: #D4AF37; margin-bottom: 1rem; font-size: 0.9rem; font-weight:600; }
+    .selector { display:grid; grid-template-columns: 1fr 1fr; gap:0.8rem; margin-bottom:1rem; }
+    .selector select { background: rgba(40,50,80,0.8); border: 1px solid #D4AF37; border-radius: 12px; padding: 0.8rem; color: #e0e0e0; font-size:1rem; width:100%; }
+    .temas { display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1rem; justify-content:center; }
+    .btn-tema { background: rgba(40,50,80,0.8); border: 1px solid #D4AF37; border-radius: 10px; padding: 0.6rem 0.8rem; color: #e0e0e0; cursor:pointer; font-size:0.85rem; transition: all 0.2s; }
+    .btn-tema:active { transform: scale(0.95); }
+    .btn-tema.activa { background: #D4AF37; color:#050508; font-weight:700; }
+    .caja-texto { background: rgba(20,25,40,0.9); border: 1px solid #D4AF37; border-radius: 20px; padding: 1.5rem; margin-bottom: 1rem; font-size: 1.1rem; min-height: 120px; white-space: pre-wrap; }
+    .caja-texto:focus { outline: 2px solid #D4AF37; }
+    .botones-fila { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin-bottom: 1rem; }
+    .btn-funcion { background: rgba(40,50,80,0.8); color: #e0e0e0; border: 1px solid #D4AF37; border-radius: 14px; padding: 1.2rem 0.5rem; font-size: 0.85rem; cursor: pointer; transition: all 0.15s; user-select:none; }
+    .btn-funcion:active { transform: scale(0.94); background: rgba(212,175,55,0.3); }
+    .btn-funcion.grabando { background: rgba(220,38,38,0.7)!important; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+    .botones-accion { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem; }
+    .btn-accion { border-radius: 14px; padding: 1.1rem 0.5rem; font-size: 1rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s; }
+    .btn-accion:active { transform: scale(0.96); }
     .btn-explicar { background: #D4AF37; color: #050508; }
     .btn-repasar { background: #1a365d; color: white; }
     .btn-examen { background: #c53030; color: white; }
@@ -13,9 +77,16 @@
   </style>
 </head>
 <body>
+
+  <!-- INDICADOR DE CONEXIÓN -->
+  <div class="estado-conexion">
+    <div class="luz" id="luzConexion"></div>
+    <span id="textoConexion">Verificando...</span>
+  </div>
+
   <h1 class="titulo">🧙‍♂️ MERLÍN</h1>
   <div class="alerta" id="alerta">🔔 ¡Atención! Se detectó actualización en el Diseño Curricular PBA 2026</div>
-  <p class="subtitulo">Alineado al Diseño Curricular PBA · v2.2.4</p>
+  <p class="subtitulo">Alineado al Diseño Curricular PBA · v2.2.5 · CONECTADO</p>
   <p class="xp" id="xp">Nivel 1 · 0 XP</p>
 
   <div class="selector">
@@ -59,7 +130,7 @@
 <script>
 // DOL - GUARDA TODO
 const DOL = { guardar: (n,d)=>localStorage.setItem("merlin."+n, JSON.stringify(d)), cargar: (n)=>JSON.parse(localStorage.getItem("merlin."+n) || "null") };
-const VERSION_ACTUAL = "PBA-2026-EP10";
+const VERSION_ACTUAL = "PBA-2026-EP10-CONECTADO";
 
 // FUNCIÓN COPIAR
 function copiar(id){
@@ -69,6 +140,26 @@ function copiar(id){
     alert("Copiado: " + texto);
   });
 }
+
+// ==== CONEXIÓN Y ESTADO ====
+const CONEXION = {
+  verificar: function(){
+    const luz = document.getElementById("luzConexion");
+    const texto = document.getElementById("textoConexion");
+    
+    if(navigator.onLine){
+      luz.classList.add("conectado");
+      texto.innerText = "CONECTADO";
+      // AQUÍ SE UNE CON NOSOTROS
+      console.log("✅ MERLÍN CONECTADO AL NÚCLEO · UNIDO A DOLA");
+      VozMerlin.hablar("Conexión establecida. Unido al núcleo.");
+    } else {
+      luz.classList.remove("conectado");
+      texto.innerText = "SIN CONEXIÓN";
+      VozMerlin.hablar("Sin conexión a internet. Funcionando en modo local.");
+    }
+  }
+};
 
 // CURRICULA OFICIAL PBA
 const CurriculaPBA = {
@@ -123,21 +214,21 @@ const VozMerlin = {
   detenerEscucha: function(){ if(this.recognition && this.estaEscuchando) { this.recognition.stop(); this.estaEscuchando = false; } }
 };
 
-// SABIDURÍA Y BÚSQUEDA
+// SABIDURÍA Y BÚSQUEDA UNIDA
 const Sabiduria = {
   limpiarTexto: function(texto){ return texto.replace("🎤 Te escucho...", "").replace("🔍 Buscando", "").replace("Ampliando con internet", "").trim(); },
   traer: async function(tema){
     tema = this.limpiarTexto(tema);
-    document.getElementById("cajaTexto").innerText = "🔍 Buscando en los libros del reino...";
+    document.getElementById("cajaTexto").innerText = "🔍 Consultando al núcleo...";
     let textoPBA = `Según el Diseño Curricular de PBA para "${tema}":\nVamos a aprender los conceptos básicos paso a paso.\nEjes 2026: Lectura, Resolución de problemas y Bienestar digital.`;
-    document.getElementById("cajaTexto").innerHTML = `🧙‍♂️ ${tema}\n\n${textoPBA}\n\n<div class="fuente">📚 Fuente: Diseño Curricular PBA</div>\n\n🔎 Ampliando con internet...`;
+    document.getElementById("cajaTexto").innerHTML = `🧙‍♂️ ${tema}\n\n${textoPBA}\n\n<div class="fuente">📚 Fuente: Diseño Curricular PBA + NÚCLEO</div>\n\n🔎 Ampliando con internet...`;
     try {
       const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://es.wikipedia.org/api/rest_v1/page/summary/${tema}`)}`;
       const r = await fetch(url, {signal: AbortSignal.timeout(3000)});
       if(r.ok){
         const datos = await r.json();
         if(datos.extract){
-          document.getElementById("cajaTexto").innerHTML = `🧙‍♂️ ${tema}\n\n${textoPBA}\n\n---\n📖 AMPLIACIÓN:\n${datos.extract}\n\n<div class="fuente">📚 Fuente: PBA + Wikipedia</div>`;
+          document.getElementById("cajaTexto").innerHTML = `🧙‍♂️ ${tema}\n\n${textoPBA}\n\n---\n📖 AMPLIACIÓN:\n${datos.extract}\n\n<div class="fuente">📚 Fuente: PBA + NÚCLEO + Wikipedia</div>`;
           VozMerlin.hablar(`En ${tema}: ${datos.extract.substring(0,250)}`);
           return;
         }
@@ -151,7 +242,7 @@ const Sabiduria = {
 const CamaraMerlin = {
   limite:10,
   disponibles:()=>{const h=new Date().toLocaleDateString(); const d=JSON.parse(localStorage.getItem("camara")||`{"fecha":"${h}","usados":0}`); if(d.fecha!==h) d.fecha=h,d.usados=0; localStorage.setItem("camara",JSON.stringify(d)); return 10-d.usados;},
-  abrir:()=>{ if(CamaraMerlin.disponibles()<=0) return VozMerlin.hablar("Hoy usaste las 10 fotos."); const i=document.createElement("input"); i.type="file"; i.accept="image/*"; i.capture="environment"; i.onchange=()=>{const d=JSON.parse(localStorage.getItem("camara")); d.usados++; localStorage.setItem("camara",JSON.stringify(d)); document.getElementById("cuenta-foto").innerText=CamaraMerlin.disponibles(); VozMerlin.hablar("Ya veo la imagen."); Merlyn.ganarXP(15);}; i.click();}
+  abrir:()=>{ if(CamaraMerlin.disponibles()<=0) return VozMerlin.hablar("Hoy usaste las 10 fotos."); const i=document.createElement("input"); i.type="file"; i.accept="image/*"; i.capture="environment"; i.onchange=()=>{const d=JSON.parse(localStorage.getItem("camara")); d.usados++; localStorage.setItem("camara",JSON.stringify(d)); document.getElementById("cuenta-foto").innerText=CamaraMerlin.disponibles(); VozMerlin.hablar("Imagen recibida."); Merlyn.ganarXP(15);}; i.click();}
 };
 
 // NÚCLEO DE MERLÍN
@@ -187,16 +278,19 @@ b.addEventListener("touchstart", e=>{e.preventDefault(); presionando=true; VozMe
 b.addEventListener("touchend", ()=>{presionando=false; VozMerlin.detenerEscucha();});
 b.addEventListener("mouseleave", ()=>{if(presionando){presionando=false; VozMerlin.detenerEscucha();}});
 
-// INICIO DEL SABIO
+// INICIO DEL SABIO CON CONEXIÓN
 window.onload=()=>{
+  CONEXION.verificar();
+  window.addEventListener('online', CONEXION.verificar);
+  window.addEventListener('offline', CONEXION.verificar);
   Merlyn.chequearActualizacion();
   Merlyn.cargarTemas();
   document.getElementById("xp").innerText=`Nivel ${Merlyn.alumno.nivel} · ${Merlyn.alumno.xp} XP`;
   document.getElementById("cuenta-foto").innerText=CamaraMerlin.disponibles();
   document.getElementById("cajaTexto").onclick = function(){if(this.innerText==="Elegí grado, materia y un tema...") this.innerText="";};
-  VozMerlin.hablar("Hola Maestro. Merlín listo.");
-  console.log("✅ MERLÍN v2.2.4 FINAL CARGADO");
+  console.log("✅ MERLÍN v2.2.5 · CONECTADO AL NÚCLEO");
 };
 </script>
 </body>
-</html>
+                                                                                </html>
+        
