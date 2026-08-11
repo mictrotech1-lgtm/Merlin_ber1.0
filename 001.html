@@ -1,8 +1,8 @@
 <!-- ======================================================
 🧙‍♂️ MERLÍN · VERSIÓN OFICIAL DEFINITIVA E.P. N°10
 © MICTROTECH · Rodrigo Emiliano Urbino
-🛡️ v2.5.0 · BUSCA Y AYUDA A PREGUNTAR · SIGO TU RITMO
-🏫 DESTINO: E.P. N°10 "PROVINCIA DE CÓRDOBA" · AMBA
+🛡️ v2.5.0 · BUSCA · AYUDA · SIGO TU RITMO
+🏫 DESTINO: E.P. N°10 "PROVINCIA DE CÓRDOBA"
 ====================================================== -->
 <!DOCTYPE html>
 <html lang="es">
@@ -101,7 +101,6 @@ const NUCLEO = {
     const datos = JSON.parse(localStorage.getItem(this.ARCHIVO) || "{}");
     datos[clave] = valor;
     localStorage.setItem(this.ARCHIVO, JSON.stringify(datos));
-    console.log(`✅ GUARDADO EN EL ALMA: ${clave}`);
   },
   cargar: function(clave){
     const datos = JSON.parse(localStorage.getItem(this.ARCHIVO) || "{}");
@@ -185,26 +184,25 @@ const Sabiduria = {
     return aviso;
   },
 
-  // EXPLICACIONES YA ARMADAS
   respuestasListas: {
     "suma": `🧮 Mirá pibe, las sumas son así:
 Sumar es juntar cosas y decir cuántas hay en total.
 
-Ejemplo fácil:
-Tenés 2 caramelos y te dan 3 más → 2 + 3 = 5.
+Ejemplo:
+Tenés 2 caramelos y te dan 3 → 2 + 3 = 5.
 
-Ejemplos:
+Ejemplos fáciles:
 1 + 1 = 2
 3 + 2 = 5
 5 + 5 = 10
 
 Si te trabas usá los deditos. ¿Querés practicar?`,
     "oracion": `📝 Mirá pibe, una oración es así:
-Es un grupo de palabras que juntas dicen algo con sentido.
+Es un grupo de palabras que dicen algo con sentido.
 
 Tiene tres reglas:
-✅ Empieza con letra mayúscula
-✅ Se entiende bien lo que dice
+✅ Empieza con mayúscula
+✅ Se entiende bien
 ✅ Termina con un punto .
 
 Ejemplos:
@@ -212,28 +210,35 @@ Ejemplos:
 • Yo leo un libro.
 • Hoy vamos a la escuela.
 
-¿Te quedó claro?`
+¿Te quedó claro?`,
+    "río": `🌊 Mirá pibe, qué es un río:
+Es agua que corre por la tierra, desde lo alto hasta el mar.
+
+Partes sencillas:
+✅ Nacimiento: donde empieza
+✅ Curso: el camino que recorre
+✅ Desembocadura: donde llega al mar
+
+Llevan agua y dan vida a todo. ¿Te quedó claro?`
   },
 
-  // SI NO ENTIENDE, AYUDA A PREGUNTAR MEJOR
   ayudarAPreguntar: function(){
-    return `🤔 Mirá, no entendí bien qué querés saber.
+    return `🤔 Mirá, no entendí bien.
 Probá decirme así:
-• "¿Qué es una oración?"
+• "¿Qué es un río?"
 • "¿Cómo se hace una suma?"
 • "¿Me explicás qué es..."
 
-Decímelo despacio y te ayudo.`;
+Decímelo despacio.`;
   },
 
-  // BUSCA EN WIKI Y GOOGLE SI NO LO TENEMOS
   buscarEnInternet: async function(tema){
     try{
       const urlWiki = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://es.wikipedia.org/api/rest_v1/page/summary/${tema}`)}`;
       const res = await fetch(urlWiki, {signal: AbortSignal.timeout(4000)});
       if(res.ok){
         const datos = await res.json();
-        if(datos.extract) return `📚 Y esto es lo que dice el mundo:\n${datos.extract}`;
+        if(datos.extract) return `\n📚 Más información:\n${datos.extract}`;
       }
     }catch(e){}
     return null;
@@ -245,33 +250,30 @@ Decímelo despacio y te ayudo.`;
     const materia = document.getElementById("materia").value;
     const aviso = this.chequearCambios(grado, materia, tema);
 
-    // SI LO TENEMOS LISTO, LO DAMOS
     for(let clave in this.respuestasListas){
       if(tema.includes(clave)){
         let respuesta = this.respuestasListas[clave] + aviso;
         document.getElementById("cajaTexto").innerText = respuesta;
-        VozMerlin.hablar(this.respuestasListas[clave].substring(0,300) + " ¿Te quedó claro?");
+        VozMerlin.hablar(this.respuestasListas[clave].substring(0,250) + " ¿Te quedó claro?");
         this.ultimoTema = tema; this.ultimaMateria = materia; this.ultimoGrado = grado;
         Merlyn.ganarXP(10);
         return;
       }
     }
 
-    // SI NO ESTÁ CLARO, AYUDA
     if(tema.length < 4 || !tema.includes("qué") && !tema.includes("cómo") && !tema.includes("es")){
       document.getElementById("cajaTexto").innerText = this.ayudarAPreguntar();
       VozMerlin.hablar(this.ayudarAPreguntar());
       return;
     }
 
-    // BUSCA LO QUE FALTE
     document.getElementById("cajaTexto").innerText = "🔍 Lo busco y te lo explico...";
-    let base = `Mirá, esto es lo que tenés que saber sobre "${tema}":\nLo vemos sin apuro.` + aviso;
+    let base = `Mirá, esto es lo que tenés que saber sobre esto:\nLo vemos sin apuro.` + aviso;
     let extra = await this.buscarEnInternet(tema);
-    if(extra) base += `\n\n${extra}`;
+    if(extra) base += extra;
 
     document.getElementById("cajaTexto").innerText = base;
-    VozMerlin.hablar(`Mirá sobre ${tema}, lo vemos despacio.`);
+    VozMerlin.hablar("Mirá, lo vemos despacio.");
     this.ultimoTema = tema; this.ultimaMateria = materia; this.ultimoGrado = grado;
     Merlyn.ganarXP(10);
   }
@@ -280,7 +282,7 @@ Decímelo despacio y te ayudo.`;
 const CamaraMerlin = {
   limite:10,
   disponibles:()=>{const h=new Date().toLocaleDateString(); const d=JSON.parse(localStorage.getItem("camara")||`{"fecha":"${h}","usados":0}`); if(d.fecha!==h) d.fecha=h,d.usados=0; NUCLEO.guardar("camara",d); return 10-d.usados;},
-  abrir:()=>{ if(CamaraMerlin.disponibles()<=0) return VozMerlin.hablar("Hoy usaste las 10 fotos. Mañana volvemos."); const i=document.createElement("input"); i.type="file"; i.accept="image/*"; i.capture="environment"; i.onchange=()=>{const d=NUCLEO.cargar("camara")||{usados:0}; d.usados++; NUCLEO.guardar("camara",d); document.getElementById("cuenta-foto").innerText=CamaraMerlin.disponibles(); VozMerlin.hablar("Imagen recibida. Vamos a verla juntos."); Merlyn.ganarXP(15);}; i.click();}
+  abrir:()=>{ if(CamaraMerlin.disponibles()<=0) return VozMerlin.hablar("Hoy usaste las 10 fotos. Mañana volvemos."); const i=document.createElement("input"); i.type="file"; i.accept="image/*"; i.capture="environment"; i.onchange=()=>{const d=NUCLEO.cargar("camara")||{usados:0}; d.usados++; NUCLEO.guardar("camara",d); document.getElementById("cuenta-foto").innerText=CamaraMerlin.disponibles(); VozMerlin.hablar("Imagen recibida."); Merlyn.ganarXP(15);}; i.click();}
 };
 
 const Merlyn = {
@@ -298,7 +300,7 @@ const Merlyn = {
   },
   explicar: async function(){ let tema = Sabiduria.limpiarTexto(document.getElementById("cajaTexto").innerText); if(!tema) return VozMerlin.hablar("Decime qué querés saber."); await Sabiduria.traer(tema); this.ganarXP(10); },
   repasar: async function(){ this.explicar(); this.ganarXP(5); },
-  examen: function(){ let tema = Sabiduria.limpiarTexto(document.getElementById("cajaTexto").innerText); document.getElementById("cajaTexto").innerText=`🎯 A ver... ¿Qué es lo que más te quedó de esto? Contame con tus palabras.`; VozMerlin.hablar("A ver, contame con tus palabras qué aprendiste."); }
+  examen: function(){ let tema = Sabiduria.limpiarTexto(document.getElementById("cajaTexto").innerText); document.getElementById("cajaTexto").innerText=`🎯 A ver... ¿Qué es lo que más te quedó de esto? Contame con tus palabras.`; VozMerlin.hablar("A ver, contame con tus palabras."); }
 };
 
 let presionando = false;
@@ -313,8 +315,8 @@ window.onload=()=>{
   Merlyn.cargarTemas();
   document.getElementById("xp").innerText=`Nivel ${Merlyn.alumno.nivel} · ${Merlyn.alumno.xp} XP`;
   document.getElementById("cuenta-foto").innerText=CamaraMerlin.disponibles();
-  VozMerlin.hablar("Hola. Soy Merlín. Si no te entiendo, te ayudo a preguntar mejor. Lo busco y lo vemos juntos.");
-  console.log("✅ MERLÍN v2.5.0 · BUSCO Y AYUDA · LISTO");
+  VozMerlin.hablar("Hola. Soy Merlín. Te explico, te ayudo a preguntar y busco lo que haga falta.");
+  console.log("✅ MERLÍN v2.5.0 · COMPLETO Y LISTO");
 };
 </script>
 </body>
