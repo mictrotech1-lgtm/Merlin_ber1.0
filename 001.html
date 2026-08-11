@@ -1,7 +1,7 @@
 <!-- ======================================================
-🧙‍♂️ MERLÍN · VERSIÓN AUTOMÁTICA DEFINITIVA
+🧙‍♂️ MERLÍN · VERSIÓN BLINDADA v2.8.1
 © MICTROTECH · Rodrigo Emiliano Urbino
-🛡️ v2.8.0 · LA ESCAPADITA SE ACTIVA SOLA
+🛡️ CORREGIDO: CARGA, EVENTOS Y LIMPIEZA AUTOMÁTICA
 🏫 DESTINO: E.P. N°10 "PROVINCIA DE CÓRDOBA"
 ====================================================== -->
 <!DOCTYPE html>
@@ -50,15 +50,16 @@
 <body>
 
   <h1 class="titulo">🧙‍♂️ MERLÍN</h1>
-  <p class="subtitulo">v2.8.0 · LA ESCAPADITA AUTOMÁTICA · E.P. N°10</p>
+  <p class="subtitulo">v2.8.1 · BLINDADO · E.P. N°10</p>
   <p class="xp" id="xp">Nivel 1 · 0 XP</p>
 
   <div class="selector">
-    <select id="grado" onchange="Merlyn.cargarTemas()">
+    <!-- SIN ONCHANGE AHORA: SE CARGA DESDE EL SCRIPT -->
+    <select id="grado">
       <option value="1">1° Grado</option><option value="2">2° Grado</option><option value="3">3° Grado</option>
       <option value="4">4° Grado</option><option value="5">5° Grado</option><option value="6">6° Grado</option>
     </select>
-    <select id="materia" onchange="Merlyn.cargarTemas()">
+    <select id="materia">
       <option value="Matematica">Matemática</option><option value="Lengua">Lengua</option><option value="CienciasNaturales">Ciencias Naturales</option><option value="CienciasSociales">Ciencias Sociales</option>
     </select>
   </div>
@@ -93,7 +94,7 @@
 
 <script>
 // ======================================================
-// 🧙‍♂️ NÚCLEO + LA ESCAPADITA AUTOMÁTICA
+// 🧙‍♂️ NÚCLEO + ESCAPADITA + CARGA SEGURA
 // ======================================================
 const NUCLEO = {
   ARCHIVO: "mictrotech.sab",
@@ -108,7 +109,6 @@ const NUCLEO = {
   }
 };
 
-// ✅ LA ESCAPADITA: LUGAR SEGURO, SE USA SOLA
 const BLOQUE_TEMPORAL = {
   limpiar: () => localStorage.removeItem("merlin_escapadita"),
   guardar: (texto) => localStorage.setItem("merlin_escapadita", texto),
@@ -234,16 +234,6 @@ En la escuela: Es el número que te ponen. Del 1 al 10.
 ¿De cuál de las dos querías saber?`
   },
 
-  ayudarAPreguntar: function(){
-    return `🤔 Mirá, no entendí bien.
-Probá decirme así:
-• "¿Qué es un río?"
-• "¿Cómo se hace una suma?"
-• "¿Me explicás qué es..."
-
-Decímelo despacio.`;
-  },
-
   buscarEnInternet: async function(tema){
     try{
       const urlWiki = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://es.wikipedia.org/api/rest_v1/page/summary/${tema}`)}`;
@@ -256,7 +246,6 @@ Decímelo despacio.`;
     return null;
   },
 
-  // ✅ FLUJO AUTOMÁTICO: MERLÍN MANEJA LA ESCAPADITA SOLO
   traer: async function(tema){
     tema = this.limpiarTexto(tema).toLowerCase();
     const grado = document.getElementById("grado").value;
@@ -271,7 +260,6 @@ Decímelo despacio.`;
       }
     }
 
-    // SI NO LO TIENE: LA ESCAPADITA SE ABRE SOLA
     if(!contenido){
       document.getElementById("cajaTexto").innerText = "🔍 Salgo a buscar...";
       BLOQUE_TEMPORAL.guardar("TRAYENDO...");
@@ -279,10 +267,11 @@ Decímelo despacio.`;
       contenido = extra || `Mirá sobre esto: lo vemos despacio.`;
     }
 
-    // GUARDA, VUELVE Y RAZONA
+    // ✅ AHORA LIMPIA DESPUÉS DE USARLO
     BLOQUE_TEMPORAL.guardar(contenido);
     document.getElementById("cajaTexto").innerText = "🧠 Lo ordeno...";
     const infoSegura = BLOQUE_TEMPORAL.leer();
+    BLOQUE_TEMPORAL.limpiar(); // LIMPIEZA FINAL
     const respuestaFinal = infoSegura + aviso;
 
     document.getElementById("cajaTexto").innerText = respuestaFinal;
@@ -317,22 +306,25 @@ const Merlyn = {
   examen: function(){ let tema = Sabiduria.limpiarTexto(document.getElementById("cajaTexto").innerText); document.getElementById("cajaTexto").innerText=`🎯 A ver... ¿Qué es lo que más te quedó? Contame con tus palabras.`; VozMerlin.hablar("A ver, contame con tus palabras qué aprendiste."); }
 };
 
-let presionando = false;
-const b=document.getElementById("btnMicro");
-b.addEventListener("mousedown", ()=>{presionando=true; VozMerlin.iniciarEscucha();});
-b.addEventListener("mouseup", ()=>{presionando=false; VozMerlin.detenerEscucha();});
-b.addEventListener("touchstart", e=>{e.preventDefault(); presionando=true; VozMerlin.iniciarEscucha();});
-b.addEventListener("touchend", ()=>{presionando=false; VozMerlin.detenerEscucha();});
-b.addEventListener("mouseleave", ()=>{if(presionando){presionando=false; VozMerlin.detenerEscucha();}});
-
-window.onload=()=>{
+// ✅ TODO SE CARGA Y SE VINCULA BIEN AHORA
+document.addEventListener("DOMContentLoaded", () => {
   Merlyn.cargarTemas();
   document.getElementById("xp").innerText=`Nivel ${Merlyn.alumno.nivel} · ${Merlyn.alumno.xp} XP`;
   document.getElementById("cuenta-foto").innerText=CamaraMerlin.disponibles();
-  VozMerlin.hablar("Hola. Soy Merlín. Ya sé cuándo usar mi lugar seguro y cuándo salir a buscar. Todo funciona solo.");
-  console.log("✅ MERLÍN v2.8.0 · LA ESCAPADITA ES AUTOMÁTICA");
-};
+  VozMerlin.hablar("Hola. Soy Merlín. Ya funciona todo bien.");
+  console.log("✅ MERLÍN v2.8.1 · BLINDADO Y LISTO");
+
+  let presionando = false;
+  const b = document.getElementById("btnMicro");
+  b.addEventListener("mousedown", ()=>{presionando=true; VozMerlin.iniciarEscucha();});
+  b.addEventListener("mouseup", ()=>{presionando=false; VozMerlin.detenerEscucha();});
+  b.addEventListener("touchstart", e=>{e.preventDefault(); presionando=true; VozMerlin.iniciarEscucha();});
+  b.addEventListener("touchend", ()=>{presionando=false; VozMerlin.detenerEscucha();});
+
+  document.getElementById("grado").addEventListener("change", Merlyn.cargarTemas);
+  document.getElementById("materia").addEventListener("change", Merlyn.cargarTemas);
+});
 </script>
 </body>
-  </html>
-  
+</html>
+      
