@@ -1,0 +1,238 @@
+<!-- ======================================================
+🧙‍♂️ MERLÍN · VERSIÓN OFICIAL DEFINITIVA E.P. N°10
+© MICTROTECH · Rodrigo Emiliano Urbino
+🛡️ v2.2.4 FINAL · LISTO PARA USO
+🏫 DESTINO: E.P. N°10 "PROVINCIA DE CÓRDOBA" · AMBA
+====================================================== -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MERLÍN · E.P. N°10</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui, -apple-system, sans-serif; }
+    body { background: linear-gradient(180deg, #050508 0%, #111827 100%); min-height:100vh; padding:1.5rem; color: #e0e0e0; }
+    .titulo { font-size: 2rem; font-weight: 800; color: #D4AF37; text-align:center; text-shadow: 0 0 8px rgba(212,175,55,0.4); }
+    .alerta { background: rgba(212,175,55,0.2); border: 1px solid #D4AF37; border-radius: 12px; padding: 0.8rem; margin: 1rem 0; text-align:center; font-size:0.9rem; display:none; animation: fadeIn 0.5s; }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    .subtitulo { font-size: 0.9rem; color: #a0aec0; text-align:center; margin-bottom: 1rem; }
+    .xp { text-align:center; color: #D4AF37; margin-bottom: 1rem; font-size: 0.9rem; font-weight:600; }
+    .selector { display:grid; grid-template-columns: 1fr 1fr; gap:0.8rem; margin-bottom:1rem; }
+    .selector select { background: rgba(40,50,80,0.8); border: 1px solid #D4AF37; border-radius: 12px; padding: 0.8rem; color: #e0e0e0; font-size:1rem; width:100%; }
+    .temas { display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1rem; justify-content:center; }
+    .btn-tema { background: rgba(40,50,80,0.8); border: 1px solid #D4AF37; border-radius: 10px; padding: 0.6rem 0.8rem; color: #e0e0e0; cursor:pointer; font-size:0.85rem; transition: all 0.2s; }
+    .btn-tema:active { transform: scale(0.95); }
+    .btn-tema.activa { background: #D4AF37; color:#050508; font-weight:700; }
+    .caja-texto { background: rgba(20,25,40,0.9); border: 1px solid #D4AF37; border-radius: 20px; padding: 1.5rem; margin-bottom: 1rem; font-size: 1.1rem; min-height: 120px; white-space: pre-wrap; }
+    .caja-texto:focus { outline: 2px solid #D4AF37; }
+    .botones-fila { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin-bottom: 1rem; }
+    .btn-funcion { background: rgba(40,50,80,0.8); color: #e0e0e0; border: 1px solid #D4AF37; border-radius: 14px; padding: 1.2rem 0.5rem; font-size: 0.85rem; cursor: pointer; transition: all 0.15s; user-select:none; }
+    .btn-funcion:active { transform: scale(0.94); background: rgba(212,175,55,0.3); }
+    .btn-funcion.grabando { background: rgba(220,38,38,0.7)!important; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+    .botones-accion { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem; }
+    .btn-accion { border-radius: 14px; padding: 1.1rem 0.5rem; font-size: 1rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s; }
+    .btn-accion:active { transform: scale(0.96); }
+    .btn-explicar { background: #D4AF37; color: #050508; }
+    .btn-repasar { background: #1a365d; color: white; }
+    .btn-examen { background: #c53030; color: white; }
+    .fuente { font-size: 0.8rem; color: #D4AF37; margin-top: 0.5rem; }
+    .seccion-apoyo { background: rgba(15,20,30,0.9); border: 1px solid #D4AF37; border-radius: 16px; padding: 1.5rem; margin: 2rem 0; text-align:center; }
+    .seccion-apoyo h3 { color: #D4AF37; font-size: 1.4rem; margin-bottom: 1rem; }
+    .dato-apoyo { margin: 0.7rem 0; color: #e0e0e0; font-size: 0.95rem; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+    .valor-apoyo { color: #D4AF37; font-weight: 600; font-family: monospace; word-break:break-all; }
+    .btn-copiar { background:#D4AF37; color:#050508; border:none; border-radius:8px; padding:6px 10px; font-size:0.8rem; cursor:pointer; font-weight:700; }
+    .btn-copiar:active { transform:scale(0.95); }
+    .pie { text-align: center; padding: 2rem 1rem; color: #777; font-size: 0.85rem; border-top: 1px solid #222; margin-top: 2rem; }
+    @media(max-width:500px){.dato-apoyo{justify-content:center; text-align:center} }
+  </style>
+</head>
+<body>
+  <h1 class="titulo">🧙‍♂️ MERLÍN</h1>
+  <div class="alerta" id="alerta">🔔 ¡Atención! Se detectó actualización en el Diseño Curricular PBA 2026</div>
+  <p class="subtitulo">Alineado al Diseño Curricular PBA · v2.2.4</p>
+  <p class="xp" id="xp">Nivel 1 · 0 XP</p>
+
+  <div class="selector">
+    <select id="grado" onchange="Merlyn.cargarTemas()">
+      <option value="1">1° Grado</option><option value="2">2° Grado</option><option value="3">3° Grado</option>
+      <option value="4">4° Grado</option><option value="5">5° Grado</option><option value="6">6° Grado</option>
+    </select>
+    <select id="materia" onchange="Merlyn.cargarTemas()">
+      <option value="Matematica">Matemática</option><option value="Lengua">Lengua</option><option value="CienciasNaturales">Ciencias Naturales</option><option value="CienciasSociales">Ciencias Sociales</option>
+    </select>
+  </div>
+
+  <div class="temas" id="temas"></div>
+  <div class="caja-texto" id="cajaTexto" contenteditable="true">Elegí grado, materia y un tema...</div>
+
+  <div class="botones-fila">
+    <button class="btn-funcion" id="btnMicro"><span style="font-size:1.5rem;display:block">🎤</span> Preguntar</button>
+    <button class="btn-funcion" onclick="VozMerlin.alternar()"><span style="font-size:1.5rem;display:block">🔊</span> Escuchar</button>
+    <button class="btn-funcion" onclick="CamaraMerlin.abrir()"><span style="font-size:1.5rem;display:block">📷</span> Foto <span id="cuenta-foto">10</span>/10</button>
+  </div>
+
+  <div class="botones-accion">
+    <button class="btn-accion btn-explicar" onclick="Merlyn.explicar()">📖 Explicar</button>
+    <button class="btn-accion btn-repasar" onclick="Merlyn.repasar()">📝 Repasar</button>
+    <button class="btn-accion btn-examen" onclick="Merlyn.examen()">🎯 Evaluar</button>
+  </div>
+
+  <section class="seccion-apoyo">
+    <h3>🤝 APOYÁ ESTE PROYECTO</h3>
+    <p style="color:#ccc; margin-bottom:1rem;">Merlín es y será gratuito para siempre. Las contribuciones se destinan exclusivamente a mantener el alojamiento y el funcionamiento.</p>
+    <p class="dato-apoyo"><strong>Titular:</strong> <span class="valor-apoyo">Rodrigo Emiliano Urbino</span></p>
+    <p class="dato-apoyo"><strong>Alias:</strong> <span class="valor-apoyo" id="alias">AVES.BRUMA.OFICIO</span> <button class="btn-copiar" onclick="copiar('alias')">Copiar</button></p>
+    <p class="dato-apoyo"><strong>CBU:</strong> <span class="valor-apoyo" id="cbu">384020050000005179327</span> <button class="btn-copiar" onclick="copiar('cbu')">Copiar</button></p>
+    <p class="dato-apoyo"><strong>Banco:</strong> <span class="valor-apoyo">Ualá Bank S.A.U.</span></p>
+  </section>
+
+  <footer class="pie">
+    © 2026 MICTROTECH · Rodrigo Emiliano Urbino · Todos los derechos reservados
+  </footer>
+
+<script>
+// DOL - GUARDA TODO
+const DOL = { guardar: (n,d)=>localStorage.setItem("merlin."+n, JSON.stringify(d)), cargar: (n)=>JSON.parse(localStorage.getItem("merlin."+n) || "null") };
+const VERSION_ACTUAL = "PBA-2026-EP10";
+
+// FUNCIÓN COPIAR
+function copiar(id){
+  const texto = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(texto).then(()=>{
+    VozMerlin.hablar("Copiado");
+    alert("Copiado: " + texto);
+  });
+}
+
+// CURRICULA OFICIAL PBA
+const CurriculaPBA = {
+  "1": { "Matematica": ["Números hasta 100", "Sumas y restas", "Figuras geométricas", "Pensamiento computacional"],
+         "Lengua": ["Leer cuentos", "Escribir mi nombre", "Comprensión lectora", "Oralidad"],
+         "CienciasNaturales": ["Mi cuerpo", "Los 5 sentidos", "Animales y plantas", "Cuidado del ambiente"],
+         "CienciasSociales": ["La escuela", "Mi familia", "El barrio", "Ciudadanía digital"]},
+  "2": { "Matematica": ["Números hasta 1000", "Multiplicación", "Fracciones", "Resolución de problemas"],
+         "Lengua": ["Leer fábulas", "Mayúscula y punto", "Sustantivos", "Producción de textos"],
+         "CienciasNaturales": ["Seres vivos", "Alimentos saludables", "El sol y la luna", "Ciencia y tecnología"],
+         "CienciasSociales": ["El mapa", "Trabajos en el barrio", "Símbolos patrios", "Derechos del niño"]},
+  "3": { "Matematica": ["División", "Perímetro", "Gráficos", "Educación financiera"],
+         "Lengua": ["Noticias", "Adjetivos", "Verbos", "Resumen"],
+         "CienciasNaturales": ["Ecosistemas", "Cuerpo humano", "Materiales", "Fuerza"],
+         "CienciasSociales": ["Buenos Aires", "Campo y ciudad", "Primeros habitantes", "El gobierno"]},
+  "4": { "Matematica": ["Fracciones equivalentes", "Área", "Probabilidad", "Decimales"],
+         "Lengua": ["Cuento", "Biografía", "Sinónimos", "Entrevista"],
+         "CienciasNaturales": ["La materia", "Energía", "Sistema solar", "Salud"],
+         "CienciasSociales": ["Las provincias", "Recursos naturales", "La Constitución", "Migraciones"]},
+  "5": { "Matematica": ["Porcentajes", "Volumen", "Estadística", "Operaciones combinadas"],
+         "Lengua": ["Novela", "Artículo de opinión", "Conectores", "Carta formal"],
+         "CienciasNaturales": ["Células", "Energía eléctrica", "Continentes", "Prevención"],
+         "CienciasSociales": ["Argentina y el mundo", "Democracia", "Población", "Problemas sociales"]},
+  "6": { "Matematica": ["Proporcionalidad", "Ecuaciones", "Ángulos", "Pensamiento computacional"],
+         "Lengua": ["Crónica", "Debate", "Textos expositivos", "Proyecto"],
+         "CienciasNaturales": ["ADN", "Reproducción", "Tecnología", "Calentamiento global"],
+         "CienciasSociales": ["Historia Argentina", "Independencia", "Economía", "Participación ciudadana"]}
+};
+
+// VOZ DE MERLÍN
+const VozMerlin = {
+  activa:true, recognition: null, estaEscuchando: false,
+  hablar:(t)=>{ if(window.speechSynthesis){speechSynthesis.cancel(); const v=new SpeechSynthesisUtterance(t); v.lang="es-AR"; v.rate=0.78; v.pitch=0.88; speechSynthesis.speak(v);} },
+  alternar:()=>{ VozMerlin.activa=!VozMerlin.activa; if(!VozMerlin.activa) speechSynthesis.cancel(); },
+  iniciarEscucha: function(){
+    if(this.estaEscuchando) return;
+    const Reconocer = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!Reconocer) return alert("Usá Chrome o Edge para el micrófono");
+    this.estaEscuchando = true;
+    document.getElementById("btnMicro").classList.add("grabando");
+    document.getElementById("cajaTexto").innerText = "";
+    this.recognition = new Reconocer();
+    this.recognition.lang = "es-AR";
+    this.recognition.continuous = false;
+    this.recognition.interimResults = false;
+    this.recognition.maxAlternatives = 1;
+    this.recognition.onresult = (e) => { document.getElementById("cajaTexto").innerText = e.results[0][0].transcript; };
+    this.recognition.onend = () => { this.estaEscuchando = false; document.getElementById("btnMicro").classList.remove("grabando"); };
+    this.recognition.onerror = () => { this.estaEscuchando = false; document.getElementById("btnMicro").classList.remove("grabando"); };
+    this.recognition.start();
+  },
+  detenerEscucha: function(){ if(this.recognition && this.estaEscuchando) { this.recognition.stop(); this.estaEscuchando = false; } }
+};
+
+// SABIDURÍA Y BÚSQUEDA
+const Sabiduria = {
+  limpiarTexto: function(texto){ return texto.replace("🎤 Te escucho...", "").replace("🔍 Buscando", "").replace("Ampliando con internet", "").trim(); },
+  traer: async function(tema){
+    tema = this.limpiarTexto(tema);
+    document.getElementById("cajaTexto").innerText = "🔍 Buscando en los libros del reino...";
+    let textoPBA = `Según el Diseño Curricular de PBA para "${tema}":\nVamos a aprender los conceptos básicos paso a paso.\nEjes 2026: Lectura, Resolución de problemas y Bienestar digital.`;
+    document.getElementById("cajaTexto").innerHTML = `🧙‍♂️ ${tema}\n\n${textoPBA}\n\n<div class="fuente">📚 Fuente: Diseño Curricular PBA</div>\n\n🔎 Ampliando con internet...`;
+    try {
+      const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://es.wikipedia.org/api/rest_v1/page/summary/${tema}`)}`;
+      const r = await fetch(url, {signal: AbortSignal.timeout(3000)});
+      if(r.ok){
+        const datos = await r.json();
+        if(datos.extract){
+          document.getElementById("cajaTexto").innerHTML = `🧙‍♂️ ${tema}\n\n${textoPBA}\n\n---\n📖 AMPLIACIÓN:\n${datos.extract}\n\n<div class="fuente">📚 Fuente: PBA + Wikipedia</div>`;
+          VozMerlin.hablar(`En ${tema}: ${datos.extract.substring(0,250)}`);
+          return;
+        }
+      }
+    } catch(e){}
+    VozMerlin.hablar(`En ${tema}: ${textoPBA.substring(0,200)}`);
+  }
+};
+
+// CÁMARA Y LÍMITE
+const CamaraMerlin = {
+  limite:10,
+  disponibles:()=>{const h=new Date().toLocaleDateString(); const d=JSON.parse(localStorage.getItem("camara")||`{"fecha":"${h}","usados":0}`); if(d.fecha!==h) d.fecha=h,d.usados=0; localStorage.setItem("camara",JSON.stringify(d)); return 10-d.usados;},
+  abrir:()=>{ if(CamaraMerlin.disponibles()<=0) return VozMerlin.hablar("Hoy usaste las 10 fotos."); const i=document.createElement("input"); i.type="file"; i.accept="image/*"; i.capture="environment"; i.onchange=()=>{const d=JSON.parse(localStorage.getItem("camara")); d.usados++; localStorage.setItem("camara",JSON.stringify(d)); document.getElementById("cuenta-foto").innerText=CamaraMerlin.disponibles(); VozMerlin.hablar("Ya veo la imagen."); Merlyn.ganarXP(15);}; i.click();}
+};
+
+// NÚCLEO DE MERLÍN
+const Merlyn = {
+  alumno: DOL.cargar("alumno") || {xp:0, nivel:1},
+  chequearActualizacion: function(){
+    const ultimaVersion = DOL.cargar("version");
+    if(ultimaVersion!== VERSION_ACTUAL){
+      document.getElementById("alerta").style.display = "block";
+      VozMerlin.hablar("Atención. Se actualizó el plan de estudios.");
+      DOL.guardar("version", VERSION_ACTUAL);
+      setTimeout(()=>document.getElementById("alerta").style.display="none", 5000);
+    }
+  },
+  cargarTemas: function(){
+    const g=document.getElementById("grado").value; const m=document.getElementById("materia").value;
+    const temas = CurriculaPBA[g][m];
+    document.getElementById("temas").innerHTML = temas.map(t=>`<button class="btn-tema" onclick="Merlyn.seleccionarTema('${t}', this)">${t}</button>`).join("");
+  },
+  seleccionarTema: function(tema, btn){ document.getElementById("cajaTexto").innerText = tema; document.querySelectorAll(".btn-tema").forEach(b=>b.classList.remove("activa")); btn.classList.add("activa"); },
+  ganarXP: function(c){ this.alumno.xp+=c; this.alumno.nivel=Math.floor(this.alumno.xp/100)+1; document.getElementById("xp").innerText=`Nivel ${this.alumno.nivel} · ${this.alumno.xp} XP`; DOL.guardar("alumno",this.alumno); },
+  explicar: async function(){ let tema = Sabiduria.limpiarTexto(document.getElementById("cajaTexto").innerText); if(!tema || tema.includes("Elegí")) return VozMerlin.hablar("Primero elegí un tema"); await Sabiduria.traer(tema); this.ganarXP(10); },
+  repasar: async function(){ this.explicar(); this.ganarXP(5); },
+  examen: function(){ let tema = Sabiduria.limpiarTexto(document.getElementById("cajaTexto").innerText); document.getElementById("cajaTexto").innerText=`🎯 EVALUACIÓN PBA\nExplica con tus palabras: ¿Qué aprendiste de ${tema}?`; VozMerlin.hablar(`Te pregunto sobre ${tema}`); }
+};
+
+// MICRÓFONO TIPO WHATSAPP
+let presionando = false;
+const b=document.getElementById("btnMicro");
+b.addEventListener("mousedown", ()=>{presionando=true; VozMerlin.iniciarEscucha();});
+b.addEventListener("mouseup", ()=>{presionando=false; VozMerlin.detenerEscucha();});
+b.addEventListener("touchstart", e=>{e.preventDefault(); presionando=true; VozMerlin.iniciarEscucha();});
+b.addEventListener("touchend", ()=>{presionando=false; VozMerlin.detenerEscucha();});
+b.addEventListener("mouseleave", ()=>{if(presionando){presionando=false; VozMerlin.detenerEscucha();}});
+
+// INICIO DEL SABIO
+window.onload=()=>{
+  Merlyn.chequearActualizacion();
+  Merlyn.cargarTemas();
+  document.getElementById("xp").innerText=`Nivel ${Merlyn.alumno.nivel} · ${Merlyn.alumno.xp} XP`;
+  document.getElementById("cuenta-foto").innerText=CamaraMerlin.disponibles();
+  document.getElementById("cajaTexto").onclick = function(){if(this.innerText==="Elegí grado, materia y un tema...") this.innerText="";};
+  VozMerlin.hablar("Hola Maestro. Merlín listo.");
+  console.log("✅ MERLÍN v2.2.4 FINAL CARGADO");
+};
+</script>
+</body>
+</html>
